@@ -34,6 +34,23 @@
 #+LATEX_HEADER:
 #+STARTUP: showeverything
 
+#+OPTIONS: reveal_width:1600 reveal_height:900
+#+REVEAL_TRANS: fade
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./operandi-tinted.css" />
+
+#+REVEAL_MATHJAX_URL: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+#+REVEAL_EXTRA_CSS: ./operandi-tinted.css
+#+REVEAL_THEME: ./my_theme.css
+#+REVEAL_EXTRA_CSS: ./footer.css
+#+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
+
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_VERSION: 4
+
+#+REVEAL_HLEVEL: 5
+#+REVEAL_EXPORT_NOTES_TO_PDF: separate-page
+#+REVEAL_DEFAULT_FRAG_STYLE: (appear)
+
 #+BIBLIOGRAPHY: ./wg21.bib
 
 * Standardising Optionals over References
