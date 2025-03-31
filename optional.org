@@ -1,6 +1,6 @@
-#+OPTIONS: ':nil *:t -:t ::t <:t H:4 \n:nil ^:t arch:headline author:t
+#+OPTIONS: ':nil *:t -:t ::t <:t H:4 \n:nil ^:nil arch:headline author:t
 #+OPTIONS: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
-#+OPTIONS: email:nil f:t inline:t num:4 p:nil pri:nil prop:nil stat:t tags:t
+#+OPTIONS: email:nil f:t inline:t num:5 p:nil pri:nil prop:nil stat:t tags:t
 #+OPTIONS: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
 #+TITLE: ~std::optional<T&>~
 #+SUBTITLE: A Case Study
@@ -27,101 +27,218 @@
 #+HTML_LINK_HOME:
 #+HTML_LINK_UP:
 #+HTML_MATHJAX:
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./modus-operandi-tinted.css"/>
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../etc/modus-vivendi-tinted.css"/>
 #+HTML_HEAD_EXTRA:
 #+INFOJS_OPT:
 #+CREATOR:
 #+LATEX_HEADER:
-#+STARTUP: showeverything
+#+STARTUP: showall
 
 #+OPTIONS: reveal_width:1600 reveal_height:900
 #+REVEAL_TRANS: fade
-#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="./operandi-tinted.css" />
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../etc/modus-vivendi-tinted.css" />
 
 #+REVEAL_MATHJAX_URL: https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
-#+REVEAL_EXTRA_CSS: ./operandi-tinted.css
-#+REVEAL_THEME: ./my_theme.css
-#+REVEAL_EXTRA_CSS: ./footer.css
+#+REVEAL_EXTRA_CSS: ../etc/modus-vivendi-tinted.css
+#+REVEAL_THEME: ../etc/my_theme.css
+#+REVEAL_EXTRA_CSS: ../etc/footer.css
+#+REVEAL_TITLE_SLIDE: <p>
 #+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
 
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+REVEAL_VERSION: 4
 
-#+REVEAL_HLEVEL: 5
+#+REVEAL_HLEVEL: 1
 #+REVEAL_EXPORT_NOTES_TO_PDF: separate-page
 #+REVEAL_DEFAULT_FRAG_STYLE: (appear)
 
-#+BIBLIOGRAPHY: ./wg21.bib
+#+CITE_EXPORT: csl ../etc/chicago-author-date.csl
+#+BIBLIOGRAPHY: ../etc/wg21.bib
+#+BIBLIOGRAPHY: ../etc/local.bib
+
 
 * Standardising Optionals over References
-Abstract: Optionals were first proposed for C++ in 2005.
+Optionals were first proposed for C++ in 2005.
 
 Optional<T> where T is constrained not to be a reference was added in 2017.
 
 Optionals for lvalue references are on track for C++ 26.
-
-What were the concerns that made the process take so long, how were concerns addressed, what did we end up with, and what  remains to be done?
+#+begin_notes
 
 This talk will discuss the early history, starting with Boost.Optional and [cite/title/b:@N1878], and what the early concerns were for the reference specialization.  [cite/title/b:@P1175R0] ,  reproposed reference support for C++20, which was not adopted. [cite/title/b:@P1683R0],  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. [cite/title/b:@P2988R0] picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group.
 
 In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as opposed to having a separate range of zero or one, was adopted. The reference implementation for ~optional<T&>~ and the test cases for ~views::maybe~ were used to vet the additional interfaces for optional range support. This merged implementation became one of the first Beman libraries, where the library and the optional reference proposal  benefited immensly from the visibility and feedback.
 
+#+end_notes
+
+** Why so long?
+- What were the concerns that made the process take so long
+- How were concerns addressed
+- What did we end up with
+- What remains to be done?
+
+#+begin_notes
+
 The core of the difficulty has been that references are not values  and  types containing a reference do not have value semantics. References do not fit comfortably in the C++ type system. The core value semantic type that also has reference semantics is a pointer, but pointers have underconstrained and unsafe semantics. The long discussion has been a proxy for what reference semantic types should look like in value semantic types in the standard library, particularly for "sum" types, like ~expected~ and ~variant~, but also for types such as ~single~.
+#+end_notes
+
+* Quick overview of optional<T&>
+#+begin_src cpp
+template <class T>
+class optional<T&> {
+  public:
+    using value_type = T;
+    using iterator   = implementation - defined; // see 0.1.4.5
+  public:
+#+end_src
+**     Constructors
+
+#+begin_src cpp
+    // 0.1.4.2, constructors
+    constexpr optional() noexcept = default;
+    constexpr optional(nullopt_t) noexcept : optional() {}
+    constexpr optional(const optional& rhs) noexcept = default;
+    template <class Arg>
+    constexpr explicit optional(in_place_t, Arg&& arg);
+    template <class U>
+    constexpr explicit(see below) optional(U&& u) noexcept(see below);
+    template <class U>
+    constexpr explicit(see below)
+        optional(optional<U>& rhs) noexcept(see below);
+    template <class U>
+    constexpr explicit(see below)
+        optional(const optional<U>& rhs) noexcept(see below);
+    template <class U>
+    constexpr explicit(see below)
+        optional(optional<U>&& rhs) noexcept(see below);
+    template <class U>
+    constexpr explicit(see below)
+        optional(const optional<U>&& rhs) noexcept(see below);
+#+end_src
+** Destructor
+#+begin_src cpp
+    constexpr ~optional() = default;
+#+end_src
+** Assignment
+#+begin_src cpp
+    // 0.1.4.3, assignment
+    constexpr optional& operator=(nullopt_t) noexcept;
+    constexpr optional& operator=(const optional& rhs) noexcept = default;
+    template <class U>
+    constexpr T& emplace(U&& u) noexcept(see below);
+#+end_src
+** Swap
+#+begin_src cpp
+    // 0.1.4.4, swap
+    constexpr void swap(optional& rhs) noexcept;
+#+end_src
+** Iterator
+#+begin_src cpp
+    // 0.1.3.6, iterator support
+    constexpr iterator begin() const noexcept;
+    constexpr iterator end() const noexcept;
+#+end_src
+** Observers
+#+begin_src cpp
+    // 0.1.4.6, observers
+    constexpr T*       operator->() const noexcept;
+    constexpr T&       operator*() const noexcept;
+    constexpr explicit operator bool() const noexcept;
+    constexpr bool     has_value() const noexcept;
+    constexpr T&       value() const; // freestanding-deleted
+    template <class U = remove_cv_t<T>>
+    constexpr remove_cv_t<T> value_or(U&& u) const;
+#+end_src
+** Monadic Operations
+#+begin_src cpp
+    // 0.1.4.7, monadic operations
+    template <class F>
+    constexpr auto and_then(F&& f) const;
+    template <class F>
+    constexpr optional<invoke_result_t<F, T&>> transform(F&& f) const;
+    template <class F>
+    constexpr optional or_else(F&& f) const;
+#+end_src
+** Modifiers
+#+begin_src cpp
+    // 0.1.4.8, modifiers
+    constexpr void reset() noexcept;
+
+#+end_src
+** Exposition-only Details
+#+begin_src cpp
+  private:
+    T* val = nullptr; // exposition only
+    10
+        // 0.1.4.9, exposition only helper functions
+        template <class U>
+        constexpr void convert - ref - init - val(U&& u); // exposition only
+};
+#+end_src
+* The Problems
+** Assign or Rebind?
+
+** Non-generic template
 
 
-* Outline
-** Quick overview of optional<T&>
-** The Problems
-*** Assign or Rebind?
-*** Non-generic template
-** Design Choices
-*** ~make_optional~
-*** Trivial construction
-*** Value Category Affects ~value()~
-*** Shallow vs Deep ~const~
-*** Conditional Explicit
-*** ~value_or~
-*** ~in_place_t~ construction
-*** Converting assignment
-** Reification Principles
-*** Construction from temporary
-*** Deleting dangling overloads
-*** Assignment of ~optional<T&>~
-*** Copy and Assignment of optional<U&>&& to optional<T>
-** The T& Problem
-*** Overloaded syntax
-**** Parameter Passing
-**** Named alias
-**** Non-null const pointer in a struct
-*** References are not Data
-** T& in an Generic Algebraic Type
-*** Request for reference semantics
-*** Not a request for T& weirdness
-*** Biggest problem for Union-like types: Sum Types
-** Project Beman
-** Future Standards Work
-*** ~std::expected~
-*** ~std::variant~
-*** ~std::views::single~
+* Design Choices
+** ~make_optional~
 
+** Trivial construction
+
+** Value Category Affects ~value()~
+
+** Shallow vs Deep ~const~
+
+** Conditional Explicit
+
+** ~value_or~
+
+** ~in_place_t~ construction
+
+** Converting assignment
+
+* Reification Principles
+** Construction from temporary
+
+** Deleting dangling overloads
+
+** Assignment of ~optional<T&>~
+
+** Copy and Assignment of optional<U&>&& to optional<T>
+
+* The T& Problem
+** Overloaded syntax
+*** Parameter Passing
+*** Named alias
+*** Non-null const pointer in a struct
+
+** References are not Data
+
+
+* T& in an Generic Algebraic Type
+** Request for reference semantics
+
+** Not a request for T& weirdness
+
+** Biggest problem for Union-like types: Sum Types
+
+* Project Beman
+
+* Future Standards Work
+** ~std::expected~
+
+** ~std::variant~
+
+** ~std::views::single~
+
+** ~rebindable_reference~
+
+** \expos ~meow-box~
 
 #+CITE_EXPORT: csl chicago-author-date.csl
 
-* IPWG Questions :noexport:
-Will any client data be used? No
-Will any proprietary data be published? No
-Will the publication expose information about our internal operations, practices, policies, or security? No
-Will the publication give away any critical competitive advantage? No
-Will the publication reveal any product functionality that hasn't yet been released? No
-Will the publication paint Bloomberg or its technology in a negative light? No
-Will the publication disparage another company and/or paint it in a negative light? No
-Will any code be published? Will the publication mention any code which has not been published? Example code will be published
-Will any proprietary data be used? No
-Will the publication reveal confidential or proprietary information belonging to or pertaining to our vendors, partners, licensors, etc.? No
-Will the publication mention (in any form) any of Bloomberg's vendors or partners, or any commercial products? No
-Will any software not originating at Bloomberg be used? No
-Will any data not originating at Bloomberg be used? No
 
 # Local Variables:
-# org-html-htmlize-output-type: inline-css
+# org-html-htmlize-output-type: css
 # End:
