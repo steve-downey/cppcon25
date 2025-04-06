@@ -382,14 +382,19 @@ html * {
 pre.src {
     background-color: #0d0e1c;
     color: #ffffff;
-  margin: var(--r-block-margin) auto;
-  padding: 15px;
-  border-radius: 15px;
+    margin: var(--r-block-margin) auto;
+    padding: 15px;
+    border-radius: 15px;
+    display: inline-block;
+    width: 70%
 }
+
 pre.example {
     background-color: #0d0e1c;
     color: #ffffff;
-  margin: var(--r-block-margin) auto;
-  padding: 15px;
-  border-radius: 15px;
+    margin: var(--r-block-margin) auto;
+    padding: 15px;
+    border-radius: 15px;
+    display: inline-block;
+    width: 70%
 }
