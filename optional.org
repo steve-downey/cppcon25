@@ -77,11 +77,11 @@ Optional<T> where T is constrained not to be a reference was added in 2017.
 
 Optionals for lvalue references are on track for C++ 26.
 
+#+begin_notes
 #+begin_src cpp
 0         1         2         3         4         5         6         7
 01234567890123456789012345678901234567890123456789012345678901234567890123456789
 #+end_src
-#+begin_notes
 
 This talk will discuss the early history, starting with Boost.Optional and [cite/title/b:@N1878], and what the early concerns were for the reference specialization.  [cite/title/b:@P1175R0] ,  reproposed reference support for C++20, which was not adopted. [cite/title/b:@P1683R0],  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. [cite/title/b:@P2988R0] picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group.
 
@@ -168,38 +168,127 @@ Library TSs hadn't fully failed at that point.
 
 * The Problems
 ** Assign or Rebind?
+#+begin_src cpp
+Cat fynn;
+Cat loki;
+optional<Cat&> maybeCat1;
+optional<Cat&> maybeCat2{fynn};
+maybeCat1 = loki;
+maybeCat2 = fynn;
+#+end_src
+What do those assignments do?
 
-** Constexpr and UB issues
+Ought they be allowed?
 
+State independence won out, eventually.
+#+begin_notes
+
+#+end_notes
 ** Non-generic template
+~optional<T&>~ violates genericity.
 
+The ~vector<bool>~ problem only for an entire value category.
+
+Reference categories are weird and non-generic.
+#+begin_notes
+#+end_notes
+** Constexpr and UB issues
+At the time of C++14 they couldn't quite be constexpr.
+
+Placement new had issues as did union techniques.
+
+We taught the constexpr more things.
+#+begin_notes
+#+end_notes
 
 * Design Choices
 ** ~make_optional~
+src_cpp[:exports code]{make_optional} largely supplanted by CTAD.
 
+src_cpp[:exports code]{make_optional<T&>} creates an optional<T>. Doing otherwise would have been worse.
+
+#+begin_notes
+#+end_notes
 ** Trivial construction
+src_cpp[:exports code]{is_trivial} deprecated in 26.
 
-** Value Category Affects ~value()~
+No worse than they have to be.
+#+begin_notes
+#+end_notes
+** Value Category Affect on src_cpp[:exports code]{optional<T&>::value() &&}
+What should src_cpp[:exports code]{optional<T&>::value()&&;} return?
 
-** Shallow vs Deep ~const~
+Choose to model pointers, a reference semantic value type.
 
+Value category of the object does not affect value category of the referent.
+
+Otherwise an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
+#+begin_notes
+#+end_notes
+** Shallow vs Deep src_cpp[:exports code]{const}
+What should src_cpp[:exports code]{optional<T&>::value() const;} return?
+
+Choose to model pointers, a reference semantic value type.
+
+A const pointer is not a pointer to const.
+
+All langauge references are const. An src_cpp[:exports code]{optional<T&>} is a reference semantic type.
+
+Not a reference.
+
+#+begin_notes
+#+end_notes
 ** Conditional Explicit
+Is src_cpp[:exports code]{optional<T&>} required?
 
-** ~value_or~
+I would have preferred to, but it was too painful.
 
-** ~in_place_t~ construction
+However lack of src_cpp[:exports code]{explicit} makes the type exponentially more complex as there are more interactions between member functions.
+#+begin_notes
+#+end_notes
+** src_cpp[:exports code]{value_or}
+What should src_cpp[:exports code]{optional<T&>::value_or(U &&u);} return?
 
+What is the "value type" for an optional.
+
+All choices are surprising to someone.
+
+Chose to return T, as that seems least dangerous.
+
+Future work: generic src_cpp[:exports code]{nullable} functions.
+
+#+begin_notes
+#+end_notes
+** src_cpp[:exports code]{in_place_t} construction
+There is no "place" to construct.
+#+begin_notes
+#+end_notes
 ** Converting assignment
+Avoid conversions that produce temporaries.
 
+Avoid confusion with src_cpp[:exports code]{optional<U&>} or src_cpp[:exports code]{optional<T>} constructors.
+
+Large overload sets are difficult to reason about.
+
+#+begin_notes
+#+end_notes
 * Reification Principles
 ** Construction from temporary
 
+#+begin_notes
+#+end_notes
 ** Deleting dangling overloads
 
-** Assignment of ~optional<T&>~
+#+begin_notes
+#+end_notes
+** Assignment of src_cpp[:exports code]{optional<T&>}
 
-** Copy and Assignment of optional<U&>&& to optional<T>
+#+begin_notes
+#+end_notes
+** Copy and Assignment of src_cpp[:exports code]{optional<U&>&&} to src_cpp[:exports code]{optional<T>}
 
+#+begin_notes
+#+end_notes
 * The T& Problem
 ** Overloaded syntax
 *** Parameter Passing
@@ -208,31 +297,106 @@ Library TSs hadn't fully failed at that point.
 
 ** References are not Data
 
-
-* T& in an Generic Algebraic Type
+#+begin_notes
+#+end_notes
+* src_cpp[:exports code]{T&} in an Generic Algebraic Type
 ** Request for reference semantics
 
+#+begin_notes
+#+end_notes
 ** Not a request for T& weirdness
 
+#+begin_notes
+#+end_notes
 ** Biggest problem for Union-like types: Sum Types
 
+#+begin_notes
+#+end_notes
 * Project Beman
+** Began last year at C++ Now 2024
+#+begin_notes
+#+end_notes
 
+** Pre-existing smd::optional
+Confirmed at Tokyo that the range-ification would work for my test cases.
+#+begin_notes
+#+end_notes
+
+** The ref-stealing bug found
+#+begin_src cpp
+Cat fynn;
+std::optional<Cat&> maybeCatRef{fynn};
+std::optional<Cat> maybeCat;
+maybeCat = std::move(maybeCatRef);
+// fynn is moved from
+#+end_src
+
+Now fixed.
+*** The fix
+Don't move the result of operator*, move the rhs and apply operator*().
+
+#+begin_src cpp
+//instead of
+*std::move(rhs)
+// use
+std::move(*rhs)
+#+end_src
+
+Because
+#+begin_src cpp
+std::optional<T&>::operator*() &&;
+#+end_src
+
+does not return an rvalue reference.
+
+#+begin_notes
+#+end_notes
 * Future Standards Work
-** ~std::expected~
+** src_cpp[:exports code]{std::expected}
 
-** ~std::variant~
+#+begin_notes
+#+end_notes
+** src_cpp[:exports code]{std::variant}
 
-** ~std::views::single~
+#+begin_notes
+#+end_notes
+** src_cpp[:exports code]{std::views::single}
 
-** ~rebindable_reference~
+#+begin_notes
+#+end_notes
+** src_cpp[:exports code]{rebindable_reference}
 
-** \expos ~meow-box~
+#+begin_notes
+#+end_notes
+** Exposition-only src_cpp[:exports code]{movable_box<T>}
 
+#+begin_notes
+#+end_notes
 
 * Questions?
+Remember a question starts with:
 
-* Comments
+#+ATTR_REVEAL: :frag (current-visible)
+- who
+- what
+- when
+- where
+- how
+- why
+
+#+REVEAL: split:t
+or
+- A propositional statement :: a statement that has a truth value, either true or false, but not both.
+
+#+REVEAL: split:t
+and goes up at the end.
+
+#+REVEAL: split:t
+#+begin_quote
+"More of a comment than a question ..."
+#+end_quote
+Is a propositional statement, but hold them for a moment.
+* Comments?
 
 * Thank You!
 
