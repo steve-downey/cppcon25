@@ -147,7 +147,7 @@ A non-owning type with reference semantics with one additional, empty, value.
 - 2016: P0220R0: Adopt Library Fundamentals Ts for c++17
 - 2018: P1175R0: A Simple and Practical Optional Reference for c++
 - 2020: P1683R0: References for Standard Library Vocabulary Types - an Optional Case Study
-- 2023: P2988R0: ~std:optional<T&>~
+- 2023: P2988R0: =std:optional<T&>=
 
 
 #+begin_notes
@@ -185,9 +185,9 @@ State independence won out, eventually.
 
 #+end_notes
 ** Non-generic template
-~optional<T&>~ violates genericity.
+src_cpp[:exports code]{optional<T&>} violates genericity.
 
-The ~vector<bool>~ problem only for an entire value category.
+The src_cpp[:exports code]{vector<bool>} problem only for an entire value category.
 
 Reference categories are weird and non-generic.
 #+begin_notes
@@ -197,15 +197,15 @@ At the time of C++14 they couldn't quite be constexpr.
 
 Placement new had issues as did union techniques.
 
-We taught the constexpr more things.
+We taught the compiler to constexpr more things.
 #+begin_notes
 #+end_notes
 
 * Design Choices
-** ~make_optional~
-src_cpp[:exports code]{make_optional} largely supplanted by CTAD.
+** src_cpp[:exports code]{make_optional()}
+src_cpp[:exports code]{make_optional()} largely supplanted by CTAD.
 
-src_cpp[:exports code]{make_optional<T&>} creates an optional<T>. Doing otherwise would have been worse.
+src_cpp[:exports code]{make_optional<T&>()} creates an src_cpp[:exports code]{optional<T>}. Doing otherwise would have been worse.
 
 #+begin_notes
 #+end_notes
@@ -230,20 +230,20 @@ What should src_cpp[:exports code]{optional<T&>::value() const;} return?
 
 Choose to model pointers, a reference semantic value type.
 
-A const pointer is not a pointer to const.
+A ~const~ pointer is not a pointer to ~const~.
 
-All langauge references are const. An src_cpp[:exports code]{optional<T&>} is a reference semantic type.
+All langauge references are ~const~. An src_cpp[:exports code]{optional<T&>} is a reference semantic type.
 
 Not a reference.
 
 #+begin_notes
 #+end_notes
 ** Conditional Explicit
-Is src_cpp[:exports code]{optional<T&>} required?
+Is src_cpp[:exports code]{optional<T&>(x)} required to construct an ~optional<T&>~?
 
 I would have preferred to, but it was too painful.
 
-However lack of src_cpp[:exports code]{explicit} makes the type exponentially more complex as there are more interactions between member functions.
+However lack of ~explicit~ makes the type exponentially more complex as there are more interactions between member functions.
 #+begin_notes
 #+end_notes
 ** src_cpp[:exports code]{value_or}
@@ -274,19 +274,20 @@ Large overload sets are difficult to reason about.
 #+end_notes
 * Reification Principles
 ** Construction from temporary
+Avoid taking references to temporaries.
 
+Rules out some safe cases, disallows many dangerous cases.
 #+begin_notes
 #+end_notes
 ** Deleting dangling overloads
+Delete, rather than remove via ~concept~, overloads that produce dangling references.
 
 #+begin_notes
 #+end_notes
 ** Assignment of src_cpp[:exports code]{optional<T&>}
+Assignment of an optional<T&> is equivalent to a pointer copy.
 
-#+begin_notes
-#+end_notes
-** Copy and Assignment of src_cpp[:exports code]{optional<U&>&&} to src_cpp[:exports code]{optional<T>}
-
+All assignment through the single function.
 #+begin_notes
 #+end_notes
 * The T& Problem
