@@ -27,8 +27,8 @@
 <p>
 </section>
 <section>
-<section id="slide-1">
-<h2 id="1"><span class="section-number-2">1.</span> Colophon</h2>
+<section id="slide-org0f44632">
+<h2 id="org0f44632">Colophon</h2>
 <ul>
 <li>Slideware: <a href="https://revealjs.com/">reveal.js</a></li>
 <li>Slide Preperation: <a href="https://gitlab.com/oer/org-re-reveal">org-re-reveal</a></li>
@@ -42,15 +42,15 @@ Intended to conform to <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance">Web
 </p>
 
 
-<div id="org5f2f6a7" class="figure">
+<div id="org927b0f0" class="figure">
 <p><img src="../etc/wcag2.2AAA-blue.svg" alt="wcag2.2AAA-blue.svg" class="org-svg" height="32" width="88px" />
 </p>
 </div>
 </section>
 </section>
 <section>
-<section id="slide-2">
-<h2 id="2"><span class="section-number-2">2.</span> Standardising Optionals over References</h2>
+<section id="slide-org7375eb8">
+<h2 id="org7375eb8">Standardising Optionals over References</h2>
 <p>
 Optionals were first proposed for C++ in 2005.
 </p>
@@ -81,8 +81,8 @@ In 2024, the proposal to make optional a range, <a href="#citeproc_bib_item_9">�
 
 </aside>
 </section>
-<section id="slide-2-1">
-<h3 id="2-1"><span class="section-number-3">2.1.</span> Why so long?</h3>
+<section id="slide-org430dbd0">
+<h3 id="org430dbd0">Why so long?</h3>
 <ul>
 <li>What were the concerns that made the process take so long.</li>
 <li>How were concerns addressed.</li>
@@ -104,49 +104,151 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-3">
-<h2 id="3"><span class="section-number-2">3.</span> Quick overview of optional&lt;T&amp;&gt;</h2>
+<section id="slide-org2e89006">
+<h2 id="org2e89006">Quick overview of optional&lt;T&amp;&gt;</h2>
 <p>
 A non-owning type with reference semantics with one additional, empty, value.
 </p>
 </section>
-<section id="slide-3-1">
-<h3 id="3-1"><span class="section-number-3">3.1.</span> intro</h3>
+<section id="slide-org284c681">
+<h3 id="org284c681">intro</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">T</span><span class="org-operator">&gt;</span> <span class="org-keyword">class</span> <span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span> <span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span> <span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">{</span></span>
+      <span class="org-keyword">public</span><span class="org-delimiter">:</span>
+        <span class="org-keyword">using</span> <span class="org-type">value_type</span> <span class="org-operator">=</span> <span class="org-type">T</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">using</span> <span class="org-type">iterator</span> <span class="org-operator">=</span> <span class="org-type">implementation_defined</span><span class="org-delimiter">;</span>
+
+      <span class="org-keyword">public</span><span class="org-delimiter">:</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-2">
-<h3 id="3-2"><span class="section-number-3">3.2.</span> Constructors</h3>
+<section id="slide-org63be786">
+<h3 id="org63be786">Constructors</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">noexcept</span> <span class="org-operator">=</span> <span class="org-keyword">default</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">nullopt_t</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span> <span class="org-delimiter">:</span> <span class="org-property-use">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">{}</span></span>
+        <span class="org-keyword">constexpr</span> <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-keyword">const</span> <span class="org-type">optional</span> <span class="org-operator">&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-variable-use">nboexcept</span> <span class="org-operator">=</span> <span class="org-keyword">default</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-3">
-<h3 id="3-3"><span class="section-number-3">3.3.</span> Constructors (continued)</h3>
+<section id="slide-orgb82984d">
+<h3 id="orgb82984d">Constructors (continued)</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">Arg</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span> <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">in_place_t</span><span class="org-delimiter">,</span> <span class="org-type">Arg</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">arg</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span>
+                <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">U</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">u</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span>
+                <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&lt;</span></span><span class="org-type">U</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&gt;</span></span> <span class="org-operator">&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span>
+                <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-keyword">const</span> <span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&lt;</span></span><span class="org-type">U</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&gt;</span></span> <span class="org-operator">&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span>
+                <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&lt;</span></span><span class="org-type">U</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&gt;</span></span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span>
+                <span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-keyword">const</span> <span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&lt;</span></span><span class="org-type">U</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&gt;</span></span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-4">
-<h3 id="3-4"><span class="section-number-3">3.4.</span> Destructor</h3>
+<section id="slide-orga47b749">
+<h3 id="orga47b749">Destructor</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-operator">~</span><span class="org-function-name">optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-operator">=</span> <span class="org-keyword">default</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-5">
-<h3 id="3-5"><span class="section-number-3">3.5.</span> Assignment</h3>
+<section id="slide-orgd8730d3">
+<h3 id="orgd8730d3">Assignment</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> <span class="org-operator">&amp;</span><span class="org-keyword">operator</span><span class="org-operator">=</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">nullopt_t</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> <span class="org-operator">&amp;</span><span class="org-keyword">operator</span><span class="org-operator">=</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-keyword">const</span> <span class="org-type">optional</span> <span class="org-operator">&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span> <span class="org-operator">=</span> <span class="org-variable-use">default</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-type">T</span> <span class="org-operator">&amp;</span><span class="org-function-name">emplace</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">U</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">u</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-comment">/*see below*/</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-6">
-<h3 id="3-6"><span class="section-number-3">3.6.</span> Swap</h3>
+<section id="slide-orgc466f0d">
+<h3 id="orgc466f0d">Swap</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">swap</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">optional</span> <span class="org-operator">&amp;</span><span class="org-variable-name">rhs</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-7">
-<h3 id="3-7"><span class="section-number-3">3.7.</span> Iterator</h3>
+<section id="slide-orgf28fc5e">
+<h3 id="orgf28fc5e">Iterator</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">iterator</span> <span class="org-function-name">begin</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">iterator</span> <span class="org-function-name">end</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-8">
-<h3 id="3-8"><span class="section-number-3">3.8.</span> Observers</h3>
+<section id="slide-org8149d37">
+<h3 id="org8149d37">Observers</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> <span class="org-operator">*</span><span class="org-keyword">operator</span><span class="org-operator">-&gt;</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> <span class="org-operator">&amp;</span><span class="org-keyword">operator</span><span class="org-operator">*</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span> <span class="org-keyword">operator</span> <span class="org-type">bool</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">bool</span> <span class="org-function-name">has_value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> <span class="org-operator">&amp;</span><span class="org-function-name">value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span> <span class="org-comment">// freestanding-deleted</span>
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span> <span class="org-operator">=</span> <span class="org-type">remove_cv_t</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">remove_cv_t</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span> <span class="org-function-name">value_or</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">U</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">u</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-9">
-<h3 id="3-9"><span class="section-number-3">3.9.</span> Monadic Operations</h3>
+<section id="slide-org727c4b6">
+<h3 id="org727c4b6">Monadic Operations</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-operator">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-keyword">auto</span> <span class="org-function-name">and_then</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">F</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">f</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">invoke_result_t</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&lt;</span></span><span class="org-type">F</span><span class="org-delimiter">,</span> <span class="org-type">T</span> <span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-2">&gt;</span></span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span> <span class="org-function-name">transform</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">F</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">f</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-operator">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> <span class="org-function-name">or_else</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">F</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">f</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span>
+
+</pre>
+</div>
 </section>
-<section id="slide-3-10">
-<h3 id="3-10"><span class="section-number-3">3.10.</span> Modifiers</h3>
+<section id="slide-orgebe6217">
+<h3 id="orgebe6217">Modifiers</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">reset</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">noexcept</span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
-<section id="slide-3-11">
-<h3 id="3-11"><span class="section-number-3">3.11.</span> Exposition-only Details</h3>
+<section id="slide-orgfb2d0ea">
+<h3 id="orgfb2d0ea">Exposition-only Details</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">      <span class="org-constant">private</span><span class="org-delimiter">:</span>
+        <span class="org-type">T</span> <span class="org-operator">*</span><span class="org-variable-name">val</span> <span class="org-operator">=</span> <span class="org-constant">nullptr</span><span class="org-delimiter">;</span> <span class="org-comment">// exposition only</span>
+
+        <span class="org-keyword">template</span> <span class="org-operator">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-operator">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">convert_ref_init_val</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-type">U</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-name">u</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span> <span class="org-comment">// exposition only</span>
+<span class="org-warning"><span class="org-rainbow-delimiters-unmatched">}</span></span><span class="org-delimiter">;</span>
+</pre>
+</div>
 </section>
 </section>
 <section>
-<section id="slide-4">
-<h2 id="4"><span class="section-number-2">4.</span> The Papers</h2>
+<section id="slide-org87c983c">
+<h2 id="org87c983c">The Papers</h2>
 <ul>
 <li>2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)</li>
 <li>2012: N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2)</li>
@@ -180,13 +282,13 @@ Library TSs hadn't fully failed at that point.
 </section>
 </section>
 <section>
-<section id="slide-5">
-<h2 id="5"><span class="section-number-2">5.</span> The Problems</h2>
-<div class="outline-text-2" id="text-5">
+<section id="slide-orgb024d89">
+<h2 id="orgb024d89">The Problems</h2>
+<div class="outline-text-2" id="text-orgb024d89">
 </div>
 </section>
-<section id="slide-5-1">
-<h3 id="5-1"><span class="section-number-3">5.1.</span> Assign or Rebind?</h3>
+<section id="slide-orgc179eea">
+<h3 id="orgc179eea">Assign or Rebind?</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span><span class="org-delimiter">;</span>
@@ -215,8 +317,8 @@ State independence won out, eventually.
 
 </aside>
 </section>
-<section id="slide-5-2">
-<h3 id="5-2"><span class="section-number-3">5.2.</span> Non-generic template</h3>
+<section id="slide-orgad3eed3">
+<h3 id="orgad3eed3">Non-generic template</h3>
 <p>
 <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code> violates genericity.
 </p>
@@ -229,8 +331,8 @@ The <code class="src src-cpp"><span class="org-variable-use">vector</span><span 
 Reference categories are weird and non-generic.
 </p>
 </section>
-<section id="slide-5-3">
-<h3 id="5-3"><span class="section-number-3">5.3.</span> Constexpr and UB issues</h3>
+<section id="slide-org255b040">
+<h3 id="org255b040">Constexpr and UB issues</h3>
 <p>
 At the time of C++14 they couldn't quite be constexpr.
 </p>
@@ -245,13 +347,13 @@ We taught the compiler to constexpr more things.
 </section>
 </section>
 <section>
-<section id="slide-6">
-<h2 id="6"><span class="section-number-2">6.</span> Design Choices</h2>
-<div class="outline-text-2" id="text-6">
+<section id="slide-orgdad8d0b">
+<h2 id="orgdad8d0b">Design Choices</h2>
+<div class="outline-text-2" id="text-orgdad8d0b">
 </div>
 </section>
-<section id="slide-6-1">
-<h3 id="6-1"><span class="section-number-3">6.1.</span> <code class="src src-cpp"><span class="org-function-call">make_optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span></code></h3>
+<section id="slide-org903e4b2">
+<h3 id="org903e4b2"><code class="src src-cpp"><span class="org-function-call">make_optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span></code></h3>
 <p>
 <code class="src src-cpp"><span class="org-function-call">make_optional</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span></code> largely supplanted by CTAD.
 </p>
@@ -260,8 +362,8 @@ We taught the compiler to constexpr more things.
 <code class="src src-cpp"><span class="org-variable-use">make_optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span></code> creates an <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-variable-use">T</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code>. Doing otherwise would have been worse.
 </p>
 </section>
-<section id="slide-6-2">
-<h3 id="6-2"><span class="section-number-3">6.2.</span> Trivial construction</h3>
+<section id="slide-org2bb3d75">
+<h3 id="org2bb3d75">Trivial construction</h3>
 <p>
 <code class="src src-cpp"><span class="org-variable-use">is_trivial</span></code> deprecated in 26.
 </p>
@@ -270,8 +372,8 @@ We taught the compiler to constexpr more things.
 No worse than they have to be.
 </p>
 </section>
-<section id="slide-6-3">
-<h3 id="6-3"><span class="section-number-3">6.3.</span> Value Category Affect on <code class="src src-cpp"><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-variable-use">value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-operator">&amp;&amp;</span></code></h3>
+<section id="slide-orgfe2cddd">
+<h3 id="orgfe2cddd">Value Category Affect on <code class="src src-cpp"><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-variable-use">value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-operator">&amp;&amp;</span></code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-variable-use">value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span><span class="org-operator">&amp;&amp;</span><span class="org-delimiter">;</span></code> return?
 </p>
@@ -288,8 +390,8 @@ Value category of the object does not affect value category of the referent.
 Otherwise an rvalue <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code> could enable moves from the referent.
 </p>
 </section>
-<section id="slide-6-4">
-<h3 id="6-4"><span class="section-number-3">6.4.</span> Shallow vs Deep <code class="src src-cpp"><span class="org-keyword">const</span></code></h3>
+<section id="slide-orgd3b4b22">
+<h3 id="orgd3b4b22">Shallow vs Deep <code class="src src-cpp"><span class="org-keyword">const</span></code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-variable-use">value</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">()</span></span> <span class="org-keyword">const</span><span class="org-delimiter">;</span></code> return?
 </p>
@@ -310,8 +412,8 @@ All langauge references are <code>const</code>. An <code class="src src-cpp"><sp
 Not a reference.
 </p>
 </section>
-<section id="slide-6-5">
-<h3 id="6-5"><span class="section-number-3">6.5.</span> Conditional Explicit</h3>
+<section id="slide-orge279142">
+<h3 id="orge279142">Conditional Explicit</h3>
 <p>
 Is <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-variable-use">x</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span></code> required to construct an <code>optional&lt;T&amp;&gt;</code>?
 </p>
@@ -324,8 +426,8 @@ I would have preferred to, but it was too painful.
 However lack of <code>explicit</code> makes the type exponentially more complex as there are more interactions between member functions.
 </p>
 </section>
-<section id="slide-6-6">
-<h3 id="6-6"><span class="section-number-3">6.6.</span> <code class="src src-cpp"><span class="org-variable-use">value_or</span></code></h3>
+<section id="slide-org1f394b4">
+<h3 id="org1f394b4"><code class="src src-cpp"><span class="org-variable-use">value_or</span></code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-type">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span>::<span class="org-variable-use">value_or</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">(</span></span><span class="org-variable-use">U</span> <span class="org-operator">&amp;&amp;</span><span class="org-variable-use">u</span><span class="org-bracket"><span class="org-rainbow-delimiters-depth-1">)</span></span><span class="org-delimiter">;</span></code> return?
 </p>
@@ -346,14 +448,14 @@ Chose to return T, as that seems least dangerous.
 Future work: generic <code class="src src-cpp"><span class="org-variable-use">nullable</span></code> functions.
 </p>
 </section>
-<section id="slide-6-7">
-<h3 id="6-7"><span class="section-number-3">6.7.</span> <code class="src src-cpp"><span class="org-variable-use">in_place_t</span></code> construction</h3>
+<section id="slide-org2b68eaf">
+<h3 id="org2b68eaf"><code class="src src-cpp"><span class="org-variable-use">in_place_t</span></code> construction</h3>
 <p>
 There is no "place" to construct.
 </p>
 </section>
-<section id="slide-6-8">
-<h3 id="6-8"><span class="section-number-3">6.8.</span> Converting assignment</h3>
+<section id="slide-orgd6bffab">
+<h3 id="orgd6bffab">Converting assignment</h3>
 <p>
 Avoid conversions that produce temporaries.
 </p>
@@ -368,13 +470,13 @@ Large overload sets are difficult to reason about.
 </section>
 </section>
 <section>
-<section id="slide-7">
-<h2 id="7"><span class="section-number-2">7.</span> Reification Principles</h2>
-<div class="outline-text-2" id="text-7">
+<section id="slide-org23476e4">
+<h2 id="org23476e4">Reification Principles</h2>
+<div class="outline-text-2" id="text-org23476e4">
 </div>
 </section>
-<section id="slide-7-1">
-<h3 id="7-1"><span class="section-number-3">7.1.</span> Construction from temporary</h3>
+<section id="slide-orgea4d5ae">
+<h3 id="orgea4d5ae">Construction from temporary</h3>
 <p>
 Avoid taking references to temporaries.
 </p>
@@ -383,14 +485,14 @@ Avoid taking references to temporaries.
 Rules out some safe cases, disallows many dangerous cases.
 </p>
 </section>
-<section id="slide-7-2">
-<h3 id="7-2"><span class="section-number-3">7.2.</span> Deleting dangling overloads</h3>
+<section id="slide-orgd5358fe">
+<h3 id="orgd5358fe">Deleting dangling overloads</h3>
 <p>
 Delete, rather than remove via <code>concept</code>, overloads that produce dangling references.
 </p>
 </section>
-<section id="slide-7-3">
-<h3 id="7-3"><span class="section-number-3">7.3.</span> Assignment of <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code></h3>
+<section id="slide-org98607c7">
+<h3 id="org98607c7">Assignment of <code class="src src-cpp"><span class="org-variable-use">optional</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-type">T</span><span class="org-operator">&amp;</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code></h3>
 <p>
 Assignment of an optional&lt;T&amp;&gt; is equivalent to a pointer copy.
 </p>
@@ -401,13 +503,13 @@ All assignment through the single function.
 </section>
 </section>
 <section>
-<section id="slide-8">
-<h2 id="8"><span class="section-number-2">8.</span> The T&amp; Problem</h2>
-<div class="outline-text-2" id="text-8">
+<section id="slide-org4b5a37b">
+<h2 id="org4b5a37b">The T&amp; Problem</h2>
+<div class="outline-text-2" id="text-org4b5a37b">
 </div>
 </section>
-<section id="slide-8-1">
-<h3 id="8-1"><span class="section-number-3">8.1.</span> Overloaded syntax</h3>
+<section id="slide-org371e86c">
+<h3 id="org371e86c">Overloaded syntax</h3>
 <p>
 Used for:
 </p>
@@ -418,8 +520,8 @@ Used for:
 
 </ul>
 </section>
-<section id="slide-8-2">
-<h3 id="8-2"><span class="section-number-3">8.2.</span> References are not Data</h3>
+<section id="slide-orgccdb729">
+<h3 id="orgccdb729">References are not Data</h3>
 <p>
 They are CoData.
 </p>
@@ -428,8 +530,8 @@ They are CoData.
 Much more about this in my Streams talk.
 </p>
 </section>
-<section id="slide-8-3">
-<h3 id="8-3"><span class="section-number-3">8.3.</span> <code>T&amp;</code> in an Generic Algebraic Type</h3>
+<section id="slide-orgd3dc831">
+<h3 id="orgd3dc831"><code>T&amp;</code> in an Generic Algebraic Type</h3>
 <ul>
 <li class="fragment appear">Request for reference semantics.</li>
 <li class="fragment appear">Not a request for T&amp; weirdness.</li>
@@ -439,13 +541,13 @@ Much more about this in my Streams talk.
 </section>
 </section>
 <section>
-<section id="slide-9">
-<h2 id="9"><span class="section-number-2">9.</span> Project Beman</h2>
-<div class="outline-text-2" id="text-9">
+<section id="slide-orgc53371a">
+<h2 id="orgc53371a">Project Beman</h2>
+<div class="outline-text-2" id="text-orgc53371a">
 </div>
 </section>
-<section id="slide-9-1">
-<h3 id="9-1"><span class="section-number-3">9.1.</span> Began last year at C++ Now 2024</h3>
+<section id="slide-orgae66c52">
+<h3 id="orgae66c52">Began last year at C++ Now 2024</h3>
 <p>
 Not a requirement for Standardization.
 </p>
@@ -458,8 +560,8 @@ LEWG is getting better at asking for implementation of exact proposal.
 Details matter.
 </p>
 </section>
-<section id="slide-9-2">
-<h3 id="9-2"><span class="section-number-3">9.2.</span> Pre-existing smd::optional</h3>
+<section id="slide-org5c954c8">
+<h3 id="org5c954c8">Pre-existing smd::optional</h3>
 <p>
 Confirmed at Tokyo, live, that the range-ification would work for my test cases for <code>views::maybe</code>.
 </p>
@@ -468,8 +570,8 @@ Confirmed at Tokyo, live, that the range-ification would work for my test cases 
 Unfortunately used early-Modern CMake.
 </p>
 </section>
-<section id="slide-9-3">
-<h3 id="9-3"><span class="section-number-3">9.3.</span> The ref-stealing bug found</h3>
+<section id="slide-org8deae8c">
+<h3 id="org8deae8c">The ref-stealing bug found</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span><span class="org-delimiter">;</span>
@@ -484,8 +586,8 @@ Unfortunately used early-Modern CMake.
 Now fixed.
 </p>
 </section>
-<section id="slide-9-3-1">
-<h4 id="9-3-1"><span class="section-number-4">9.3.1.</span> The fix</h4>
+<section id="slide-org8a192a3">
+<h4 id="org8a192a3">The fix</h4>
 <p>
 Don't move the result of operator*, move the rhs and apply operator*().
 </p>
@@ -514,30 +616,30 @@ does not return an rvalue reference.
 </section>
 </section>
 <section>
-<section id="slide-10">
-<h2 id="10"><span class="section-number-2">10.</span> Future Standards Work</h2>
-<div class="outline-text-2" id="text-10">
+<section id="slide-org54f272c">
+<h2 id="org54f272c">Future Standards Work</h2>
+<div class="outline-text-2" id="text-org54f272c">
 </div>
 </section>
-<section id="slide-10-1">
-<h3 id="10-1"><span class="section-number-3">10.1.</span> <code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-variable-use">expected</span></code></h3>
+<section id="slide-org603f2dc">
+<h3 id="org603f2dc"><code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-variable-use">expected</span></code></h3>
 </section>
-<section id="slide-10-2">
-<h3 id="10-2"><span class="section-number-3">10.2.</span> <code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-variable-use">variant</span></code></h3>
+<section id="slide-orge040fdc">
+<h3 id="orge040fdc"><code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-variable-use">variant</span></code></h3>
 </section>
-<section id="slide-10-3">
-<h3 id="10-3"><span class="section-number-3">10.3.</span> <code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-constant">views</span>::<span class="org-variable-use">single</span></code></h3>
+<section id="slide-orgad19ac0">
+<h3 id="orgad19ac0"><code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-constant">views</span>::<span class="org-variable-use">single</span></code></h3>
 </section>
-<section id="slide-10-4">
-<h3 id="10-4"><span class="section-number-3">10.4.</span> <code class="src src-cpp"><span class="org-variable-use">rebindable_reference</span></code></h3>
+<section id="slide-orgb188289">
+<h3 id="orgb188289"><code class="src src-cpp"><span class="org-variable-use">rebindable_reference</span></code></h3>
 </section>
-<section id="slide-10-5">
-<h3 id="10-5"><span class="section-number-3">10.5.</span> Exposition-only <code class="src src-cpp"><span class="org-variable-use">movable_box</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-variable-use">T</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code></h3>
+<section id="slide-orgd07f0eb">
+<h3 id="orgd07f0eb">Exposition-only <code class="src src-cpp"><span class="org-variable-use">movable_box</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&lt;</span></span><span class="org-variable-use">T</span><span class="org-operator"><span class="org-rainbow-delimiters-depth-1">&gt;</span></span></code></h3>
 </section>
 </section>
 <section>
-<section id="slide-11">
-<h2 id="11"><span class="section-number-2">11.</span> Questions?</h2>
+<section id="slide-orgec95099">
+<h2 id="orgec95099">Questions?</h2>
 <p>
 Remember a question starts with:
 </p>
@@ -554,7 +656,7 @@ Remember a question starts with:
 
 </section>
 <section>
-<h2><span class="section-number-2">11.</span> Questions?</h2>
+<h2>Questions?</h2>
 <p>
 or
 </p>
@@ -565,14 +667,14 @@ or
 
 </section>
 <section>
-<h2><span class="section-number-2">11.</span> Questions?</h2>
+<h2>Questions?</h2>
 <p>
 and goes up at the end.
 </p>
 
 </section>
 <section>
-<h2><span class="section-number-2">11.</span> Questions?</h2>
+<h2>Questions?</h2>
 <blockquote>
 <p>
 "More of a comment than a question &#x2026;"
@@ -584,20 +686,20 @@ Is a propositional statement, but hold them for a moment.
 </section>
 </section>
 <section>
-<section id="slide-12">
-<h2 id="12"><span class="section-number-2">12.</span> Comments?</h2>
+<section id="slide-org81d2c27">
+<h2 id="org81d2c27">Comments?</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-13">
-<h2 id="13"><span class="section-number-2">13.</span> Thank You!</h2>
+<section id="slide-org426b142">
+<h2 id="org426b142">Thank You!</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-14">
-<h2 id="14"><span class="section-number-2">14.</span> Bibliography</h2>
+<section id="slide-orgee00acf">
+<h2 id="orgee00acf">Bibliography</h2>
 <style>.csl-entry{text-indent: -1.5em; margin-left: 1.5em;}</style><div class="csl-bib-body">
   <div class="csl-entry"><a id="citeproc_bib_item_1"></a>Cacciola, F., and A. Krzemieński. 2012. “N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2).” https://wg21.link/n3406; WG21.</div>
   <div class="csl-entry"><a id="citeproc_bib_item_2"></a>———. 2013a. “N3527: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2).” https://wg21.link/n3527; WG21.</div>
