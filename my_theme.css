@@ -399,14 +399,13 @@ pre.src-cpp {
     width: 70%
 }
 
-code {
+code.src.src-cpp {
     background-color: #0d0e1c;
     color: #ffffff;
     margin: var(--r-block-margin) auto;
     padding: 15px;
     border-radius: 15px;
     display: inline-block;
-    width: 70%
 }
 
 pre.example {
