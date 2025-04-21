@@ -90,9 +90,9 @@ In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as oppo
 #+end_notes
 
 ** Why so long?
-- What were the concerns that made the process take so long
-- How were concerns addressed
-- What did we end up with
+- What were the concerns that made the process take so long.
+- How were concerns addressed.
+- What did we end up with.
 - What remains to be done?
 
 #+begin_notes
@@ -292,34 +292,43 @@ All assignment through the single function.
 #+end_notes
 * The T& Problem
 ** Overloaded syntax
-*** Parameter Passing
-*** Named alias
-*** Non-null const pointer in a struct
+Used for:
+#+ATTR_REVEAL: :frag (appear)
+- Parameter Passing
+- Named alias
+- Non-null const pointer in a struct
 
 ** References are not Data
+They are CoData.
 
+Much more about this in my Streams talk.
 #+begin_notes
 #+end_notes
-* src_cpp[:exports code]{T&} in an Generic Algebraic Type
-** Request for reference semantics
-
-#+begin_notes
-#+end_notes
-** Not a request for T& weirdness
-
-#+begin_notes
-#+end_notes
-** Biggest problem for Union-like types: Sum Types
+** ~T&~ in an Generic Algebraic Type
+#+ATTR_REVEAL: :frag (appear)
+- Request for reference semantics.
+- Not a request for T& weirdness.
+- Biggest problem for Union-like types -- Sum Types.
 
 #+begin_notes
 #+end_notes
 * Project Beman
 ** Began last year at C++ Now 2024
+
+Not a requirement for Standardization.
+
+LEWG is getting better at asking for implementation of exact proposal.
+
+Details matter.
+
 #+begin_notes
 #+end_notes
 
 ** Pre-existing smd::optional
-Confirmed at Tokyo that the range-ification would work for my test cases.
+Confirmed at Tokyo, live, that the range-ification would work for my test cases for ~views::maybe~.
+
+Unfortunately used early-Modern CMake.
+
 #+begin_notes
 #+end_notes
 
