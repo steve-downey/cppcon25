@@ -63,7 +63,7 @@
 - Fonts: [[https://www.brailleinstitute.org/freefont/][Atkinson Hyperlegible]] Next and Mono
 - Color Themes: [[https://github.com/protesilaos/modus-themes][Modus]] Vivendi and Operandi Tinted
 
-Intended to conform to [[https://www.w3.org/WAI/WCAG2AAA-Conformance][Web Content Accessibility Guidelines level AAA]]
+Intended to conform to [[https://www.w3.org/WAI/WCAG2AAA-Conformance][Web Content Accessibility Guidelines Level AAA]]
 
 #+ATTR_HTML: :height 32 :width 88px
 [[../etc/wcag2.2AAA-blue.svg]]
@@ -75,7 +75,7 @@ Optionals were first proposed for C++ in 2005.
 
 Optional<T> where T is constrained not to be a reference was added in 2017.
 
-Optionals for lvalue references are on track for C++ 26.
+Optionals for lvalue references are on track for C++26.
 
 #+begin_notes
 #+begin_src cpp
@@ -90,9 +90,9 @@ In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as oppo
 #+end_notes
 
 ** Why so long?
-- What were the concerns that made the process take so long.
-- How were concerns addressed.
-- What did we end up with.
+- What were the concerns that made the process take so long?
+- How were concerns addressed?
+- What did we end up with?
 - What remains to be done?
 
 #+begin_notes
@@ -102,7 +102,7 @@ The core of the difficulty has been that references are not values  and  types c
 
 * Quick overview of optional<T&>
 
-A non-owning type with reference semantics with one additional, empty, value.
+A non-owning type with reference semantics with one additional value representing the empty state.
 
 ** intro
 #+transclude: [[file:optional-synopsis.hpp::fb8602f8-ef1d-49ce-94ed-a141adfe7a5c]] :lines 2- :src cpp :end "fb8602f8-ef1d-49ce-94ed-a141adfe7a5c end"
@@ -143,10 +143,10 @@ A non-owning type with reference semantics with one additional, empty, value.
 - 2012: N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2)
 - 2013: N3527: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 3)
 - 2013: N3672: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 4)
-- 2015: N4529: Working Draft, c++ Extensions for Library Fundamentals, Version 2
-- 2016: P0220R0: Adopt Library Fundamentals Ts for c++17
-- 2018: P1175R0: A Simple and Practical Optional Reference for c++
-- 2020: P1683R0: References for Standard Library Vocabulary Types - an Optional Case Study
+- 2015: N4529: Working Draft, C++ Extensions for Library Fundamentals, Version 2
+- 2016: P0220R0: Adopt Library Fundamentals TS  for c++17
+- 2018: P1175R0: A Simple and Practical Optional Reference for C++
+- 2020: P1683R0: References for Standard Library Vocabulary Types - An Optional Case Study
 - 2023: P2988R0: =std:optional<T&>=
 
 
@@ -187,7 +187,7 @@ State independence won out, eventually.
 ** Non-generic template
 src_cpp[:exports code]{optional<T&>} violates genericity.
 
-The src_cpp[:exports code]{vector<bool>} problem only for an entire value category.
+The "src_cpp[:exports code]{vector<bool>}" problem only for an entire value category.
 
 Reference categories are weird and non-generic.
 #+begin_notes
@@ -195,22 +195,22 @@ Reference categories are weird and non-generic.
 ** Constexpr and UB issues
 At the time of C++14 they couldn't quite be constexpr.
 
-Placement new had issues as did union techniques.
+/Placement new/ had issues as did ~union~ techniques.
 
-We taught the compiler to constexpr more things.
+We taught the compiler to ~constexpr~ more things.
 #+begin_notes
 #+end_notes
 
 * Design Choices
 ** src_cpp[:exports code]{make_optional()}
-src_cpp[:exports code]{make_optional()} largely supplanted by CTAD.
+src_cpp[:exports code]{make_optional()} was largely supplanted by CTAD.
 
 src_cpp[:exports code]{make_optional<T&>()} creates an src_cpp[:exports code]{optional<T>}. Doing otherwise would have been worse.
 
 #+begin_notes
 #+end_notes
 ** Trivial construction
-src_cpp[:exports code]{is_trivial} deprecated in 26.
+src_cpp[:exports code]{is_trivial} is deprecated in 26.
 
 No worse than they have to be.
 #+begin_notes
@@ -225,7 +225,7 @@ Value category of the object does not affect value category of the referent.
 Otherwise an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
 #+begin_notes
 #+end_notes
-** Shallow vs Deep src_cpp[:exports code]{const}
+** Shallow vs. Deep src_cpp[:exports code]{const}
 What should src_cpp[:exports code]{optional<T&>::value() const;} return?
 
 Choose to model pointers, a reference semantic value type.
@@ -243,13 +243,13 @@ Is src_cpp[:exports code]{optional<T&>(x)} required to construct an ~optional<T&
 
 I would have preferred to, but it was too painful.
 
-However lack of ~explicit~ makes the type exponentially more complex as there are more interactions between member functions.
+However lack of ~explicit~ makes the type exponentially more complex,  as there are more interactions between member functions.
 #+begin_notes
 #+end_notes
 ** src_cpp[:exports code]{value_or}
 What should src_cpp[:exports code]{optional<T&>::value_or(U &&u);} return?
 
-What is the "value type" for an optional.
+What is the "value type" for an optional?
 
 All choices are surprising to someone.
 
@@ -268,7 +268,7 @@ Avoid conversions that produce temporaries.
 
 Avoid confusion with src_cpp[:exports code]{optional<U&>} or src_cpp[:exports code]{optional<T>} constructors.
 
-Large overload sets are difficult to reason about.
+Large /overload sets/ are difficult to reason about.
 
 #+begin_notes
 #+end_notes
@@ -280,14 +280,14 @@ Rules out some safe cases, disallows many dangerous cases.
 #+begin_notes
 #+end_notes
 ** Deleting dangling overloads
-Delete, rather than remove via ~concept~, overloads that produce dangling references.
+Delete, rather than remove via ~concept~,  function overloads that produce dangling references.
 
 #+begin_notes
 #+end_notes
 ** Assignment of src_cpp[:exports code]{optional<T&>}
 Assignment of an optional<T&> is equivalent to a pointer copy.
 
-All assignment through the single function.
+All assignments are through the single function.
 #+begin_notes
 #+end_notes
 * The T& Problem
@@ -313,7 +313,7 @@ Much more about this in my Streams talk.
 #+begin_notes
 #+end_notes
 * Project Beman
-** Began last year at C++ Now 2024
+** Began last year at C++Now 2024
 
 Not a requirement for Standardization.
 
@@ -327,7 +327,9 @@ Details matter.
 ** Pre-existing smd::optional
 Confirmed at Tokyo, live, that the range-ification would work for my test cases for ~views::maybe~.
 
-Unfortunately used early-Modern CMake.
+Unfortunately ~smd::optional~ used early-Modern CMake.
+
+This meant rework to bring it to current standards.
 
 #+begin_notes
 #+end_notes

@@ -73,7 +73,6 @@ template <class T> class optional<T &> {
         constexpr optional<invoke_result_t<F, T &>> transform(F &&f) const;
 
         template <class F> constexpr optional or_else(F &&f) const;
-
         // 4f2fafac-9479-47ce-8f15-983c315af300 end
 
         // 62d12978-14b9-4ecf-afb0-e80e25062a3b

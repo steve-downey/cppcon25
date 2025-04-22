@@ -1,40 +1,54 @@
-The L in "Level III" in "Intended to conform to Web Content Accessibility Guidelines level AAA" should be capitalized.
-I think there's an extra space in C++26 in "Optionals for lvalue references are on track for C++ 26."
+The L in "Level III" in "Intended to conform to Web Content Accessibility Guidelines level AAA" should be capitalized. -- DONE
 
-All four bullets on the "Why so long?" slide are questions and should end with question marks, not periods (as 3 of the 4 currently do).
+I think there's an extra space in C++26 in "Optionals for lvalue references are on track for C++ 26." -- DONE
 
-Remove the comma after "extra" in "A non-owning type with reference semantics with one additional, empty, value."
+All four bullets on the "Why so long?" slide are questions and should end with question marks, not periods (as 3 of the 4 currently do). -- DONE
 
-On the "Monadic Operations" slide, there seems to be an extra blank line at the end of the code block. The bottom of the black box should be closer to the last line of code.
+Remove the comma after "extra" in "A non-owning type with reference semantics with one additional, empty, value." -- Changed
 
-The 2005 paper has "an" in the title, when it should be 'a' (as all the other papers are correctly titled): "2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)" [This re-appears in the Bibliography, so fix there too!]
+On the "Monadic Operations" slide, there seems to be an extra blank line at the end of the code block. The bottom of the black box should be closer to the last line of code. -- FIXED
 
-The 2016 paper (P0220R0) should have 'TS' in CAPS and so should C++ (not c++); the second error needs to fixed in the title of the 2018 paper (P1175R0) as well. [This re-appears in the Bibliography, so fix there too!]
+The 2005 paper has "an" in the title, when it should be 'a' (as all the other papers are correctly titled): "2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)" [This re-appears in the Bibliography, so fix there too!] -- It's broken in the biblographic data that WG21 publishes. I'll fix the main slide, the generated Bibliography will take a litttle more work.
 
-Is there a word or two missing in "The vector<bool> problem [MISSING?] only for an entire value category.
+The 2016 paper (P0220R0) should have 'TS' in CAPS and so should C++ (not c++); the second error needs to fixed in the title of the 2018 paper (P1175R0) as well. [This re-appears in the Bibliography, so fix there too!]  -- fixed in main slde, will work on editing the bib data.
 
-Missing comma in "At the time of C++14, they couldn't quite be constexpr." AND "Placement new had issues, as did union techniques. Also, is "Placement new" correct or is there something missing there too?
+Is there a word or two missing in "The vector<bool> problem [MISSING?] only for an entire value category. -- the "vector<bool> problem" is a well known issue
+Analogy: "The designated hitter problem only for all baseball players on the team."
+Adding quotes around the phase.
 
-MISSING WORD: make_optional() was largely supplanted by CTAD.
+Missing comma in "At the time of C++14, they couldn't quite be constexpr." AND "Placement new had issues, as did union techniques. Also, is "Placement new" correct or is there something missing there too? - "Placement new" is a term of art in C++.  Italicized the technical term.
 
-MISSING WORDS: is_trivial will be deprecated in C++26.
+MISSING WORD: make_optional() was largely supplanted by CTAD. -- fixed
 
-MISSING PERIOD AFTER VS: Shallow vs. Deep const
+MISSING WORDS: is_trivial will be deprecated in C++26. --fixed
 
-MISSING COMMAS: "However, lack of explicit makes the type exponentially more complex, as there are more interactions between member functions."
+MISSING PERIOD AFTER VS: Shallow vs. Deep const -- fixed
 
-MISSING ?: "What is the "value type" for an optional?"
+MISSING COMMAS: "However, lack of explicit makes the type exponentially more complex, as there are more interactions between member functions." --fixed
+
+MISSING ?: "What is the "value type" for an optional?" --fixed
 
 Should this be 'overloaded'? -> Large overload sets are difficult to reason about.
+-- overload set is a technical term. Setting in italics.
 
 MISSING WORD(S)?? -> "Delete, rather than remove via concept, [MISSING??] overloads that produce dangling references."
+-- Delete, rather than remove via ~concept~,  function overloads that produce dangling references.
 
 Should this be "assignments"? -> "All assignment through the single function."
+-- All assignments are through the single function.
 
-Remove extra space in C++Now: "Began last year at C++Now 2024"
+Remove extra space in C++Now: "Began last year at C++Now 2024" -- fixed
 
 MISSING COMMA (depending on your intent): Unfortunately, used early-Modern CMake.
+--
+Unfortunately ~smd::optional~ used early-Modern CMake.
+
+This meant rework to bring it to current standards.
+--
 
 Bibliography seems to be missing some authors' names... ___
-
-Copyright statement on the slide template is wrong. Should be: © 2025 Bloomberg Finance L.P. All rights reserved.
+--
+Chicago style, repeated author names are ___
+I'll hide the slide in the presentation. And fiddle with the bibliography software last thing.
+--
+Copyright statement on the slide template is wrong. Should be: © 2025 Bloomberg Finance L.P. All rights reserved. -- Fixed
