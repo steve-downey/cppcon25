@@ -1,0 +1,40 @@
+The L in "Level III" in "Intended to conform to Web Content Accessibility Guidelines level AAA" should be capitalized.
+I think there's an extra space in C++26 in "Optionals for lvalue references are on track for C++ 26."
+
+All four bullets on the "Why so long?" slide are questions and should end with question marks, not periods (as 3 of the 4 currently do).
+
+Remove the comma after "extra" in "A non-owning type with reference semantics with one additional, empty, value."
+
+On the "Monadic Operations" slide, there seems to be an extra blank line at the end of the code block. The bottom of the black box should be closer to the last line of code.
+
+The 2005 paper has "an" in the title, when it should be 'a' (as all the other papers are correctly titled): "2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)" [This re-appears in the Bibliography, so fix there too!]
+
+The 2016 paper (P0220R0) should have 'TS' in CAPS and so should C++ (not c++); the second error needs to fixed in the title of the 2018 paper (P1175R0) as well. [This re-appears in the Bibliography, so fix there too!]
+
+Is there a word or two missing in "The vector<bool> problem [MISSING?] only for an entire value category.
+
+Missing comma in "At the time of C++14, they couldn't quite be constexpr." AND "Placement new had issues, as did union techniques. Also, is "Placement new" correct or is there something missing there too?
+
+MISSING WORD: make_optional() was largely supplanted by CTAD.
+
+MISSING WORDS: is_trivial will be deprecated in C++26.
+
+MISSING PERIOD AFTER VS: Shallow vs. Deep const
+
+MISSING COMMAS: "However, lack of explicit makes the type exponentially more complex, as there are more interactions between member functions."
+
+MISSING ?: "What is the "value type" for an optional?"
+
+Should this be 'overloaded'? -> Large overload sets are difficult to reason about.
+
+MISSING WORD(S)?? -> "Delete, rather than remove via concept, [MISSING??] overloads that produce dangling references."
+
+Should this be "assignments"? -> "All assignment through the single function."
+
+Remove extra space in C++Now: "Began last year at C++Now 2024"
+
+MISSING COMMA (depending on your intent): Unfortunately, used early-Modern CMake.
+
+Bibliography seems to be missing some authors' names... ___
+
+Copyright statement on the slide template is wrong. Should be: © 2025 Bloomberg Finance L.P. All rights reserved.
