@@ -45,12 +45,14 @@
 #+REVEAL_TITLE_SLIDE: <p>
 #+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
 
-#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+# #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_ROOT: ./reveal.js
 #+REVEAL_VERSION: 4
 
-#+REVEAL_HLEVEL: 1
+#+REVEAL_HLEVEL: 4
 #+REVEAL_EXPORT_NOTES_TO_PDF: separate-page
 #+REVEAL_DEFAULT_FRAG_STYLE: (appear)
+#+REVEAL_EXTRA_OPTIONS: pdfSeparateFragments: true
 
 #+CITE_EXPORT: csl ../etc/chicago-author-date.csl
 #+BIBLIOGRAPHY: ../etc/wg21.bib
@@ -78,10 +80,6 @@ Optional<T> where T is constrained not to be a reference was added in 2017.
 Optionals for lvalue references are on track for C++26.
 
 #+begin_notes
-#+begin_src cpp
-0         1         2         3         4         5         6         7
-01234567890123456789012345678901234567890123456789012345678901234567890123456789
-#+end_src
 
 This talk will discuss the early history, starting with Boost.Optional and [cite/title/b:@N1878], and what the early concerns were for the reference specialization.  [cite/title/b:@P1175R0] ,  reproposed reference support for C++20, which was not adopted. [cite/title/b:@P1683R0],  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. [cite/title/b:@P2988R0] picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group.
 
@@ -173,8 +171,8 @@ Cat fynn;
 Cat loki;
 optional<Cat&> maybeCat1;
 optional<Cat&> maybeCat2{fynn};
-maybeCat1 = loki;
-maybeCat2 = fynn;
+maybeCat1 = fynn;
+maybeCat2 = loki;
 #+end_src
 What do those assignments do?
 
@@ -225,7 +223,7 @@ Value category of the object does not affect value category of the referent.
 Otherwise an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
 #+begin_notes
 #+end_notes
-** Shallow vs. Deep src_cpp[:exports code]{const}
+** Shallow vs. Deep ~const~
 What should src_cpp[:exports code]{optional<T&>::value() const;} return?
 
 Choose to model pointers, a reference semantic value type.
@@ -246,7 +244,7 @@ I would have preferred to, but it was too painful.
 However lack of ~explicit~ makes the type exponentially more complex,  as there are more interactions between member functions.
 #+begin_notes
 #+end_notes
-** src_cpp[:exports code]{value_or}
+** src_cpp[:exports code]{value_or()}
 What should src_cpp[:exports code]{optional<T&>::value_or(U &&u);} return?
 
 What is the "value type" for an optional?
@@ -259,8 +257,8 @@ Future work: generic src_cpp[:exports code]{nullable} functions.
 
 #+begin_notes
 #+end_notes
-** src_cpp[:exports code]{in_place_t} construction
-There is no "place" to construct.
+** ~in_place_t~ construction
+There is no "place" to construct in to.
 #+begin_notes
 #+end_notes
 ** Converting assignment
@@ -356,12 +354,13 @@ std::move(*rhs)
 
 Because
 #+begin_src cpp
-std::optional<T&>::operator*() &&;
+std::optional<T&>::operator*() && -> T&; // overload not actually present
 #+end_src
 
 does not return an rvalue reference.
 
 #+begin_notes
+Actually doesn't exist.
 #+end_notes
 * Future Standards Work
 ** src_cpp[:exports code]{std::expected}
@@ -396,14 +395,14 @@ Remember a question starts with:
 - how
 - why
 
-#+REVEAL: split:t
+#+REVEAL: split
 or
 - A propositional statement :: a statement that has a truth value, either true or false, but not both.
 
-#+REVEAL: split:t
+#+REVEAL: split
 and goes up at the end.
 
-#+REVEAL: split:t
+#+REVEAL: split
 #+begin_quote
 "More of a comment than a question ..."
 #+end_quote
@@ -413,6 +412,10 @@ Is a propositional statement, but hold them for a moment.
 * Thank You!
 
 * Bibliography
+   :PROPERTIES:
+   :reveal_extra_attr: data-visibility="hidden"
+   :END:
+
 #+CITE_EXPORT: csl chicago-author-date.csl
 #+print_bibliography:
 
