@@ -45,8 +45,8 @@
 #+REVEAL_TITLE_SLIDE: <p>
 #+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
 
-# #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
-#+REVEAL_ROOT: ./reveal.js
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+# #+REVEAL_ROOT: ./reveal.js
 #+REVEAL_VERSION: 4
 
 #+REVEAL_HLEVEL: 4
