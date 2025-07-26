@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title><code>std::optional&lt;T&amp;&gt;</code></title>
+<meta name="author" content="Steve Downey"/>
+<meta name="description" content="
+"/>
+<meta name="keywords" content=" "/>
+<style type="text/css">
+.underline { text-decoration: underline; }
+</style>
+<link rel="stylesheet" href="./reveal.js/dist/reveal.css"/>
+
+<link rel="stylesheet" href="../etc/my_theme.css" id="theme"/>
+
+<link rel="stylesheet" href="../etc/modus-vivendi-tinted.css"/>
+
+<link rel="stylesheet" href="../etc/footer.css"/>
+<link rel="stylesheet" type="text/css" href="../etc/modus-vivendi-tinted.css"/>
+<link rel="stylesheet" type="text/css" href="../etc/modus-vivendi-tinted.css" />
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+<section id="sec-title-slide" data-background="./title.png">
+<p>
+</section>
+<section>
+<section id="slide-org09cce5e">
+<h2 id="org09cce5e">Colophon</h2>
+<ul>
+<li>Slideware: <a href="https://revealjs.com/">reveal.js</a></li>
+<li>Slide Preperation: <a href="https://gitlab.com/oer/org-re-reveal">org-re-reveal</a></li>
+<li>Fonts: <a href="https://www.brailleinstitute.org/freefont/">Atkinson Hyperlegible</a> Next and Mono</li>
+<li>Color Themes: <a href="https://github.com/protesilaos/modus-themes">Modus</a> Vivendi and Operandi Tinted</li>
+
+</ul>
+
+<p>
+Intended to conform to <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance">Web Content Accessibility Guidelines Level AAA</a>
+</p>
+
+
+<div id="orgfa65a47" class="figure">
+<p><img src="../etc/wcag2.2AAA-blue.svg" alt="wcag2.2AAA-blue.svg" class="org-svg" height="32" width="88px" />
+</p>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org3b40d0d">
+<h2 id="org3b40d0d">Standardising Optionals over References</h2>
+<p>
+Optionals were first proposed for C++ in 2005.
+</p>
+
+<p>
+Optional&lt;T&gt; where T is constrained not to be a reference was added in 2017.
+</p>
+
+<p>
+Optionals for lvalue references are on track for C++26.
+</p>
+
+<aside class="notes">
+<p>
+
+</p>
+
+<p>
+This talk will discuss the early history, starting with Boost.Optional and <a href="#citeproc_bib_item_4">“N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)”</a>, and what the early concerns were for the reference specialization.  <a href="#citeproc_bib_item_7">“P1175R0: A Simple and Practical Optional Reference for c++”</a> ,  reproposed reference support for C++20, which was not adopted. <a href="#citeproc_bib_item_8">“P1683R0: References for Standard Library Vocabulary Types - an Optional Case Study”</a>,  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. <a href="#citeproc_bib_item_6">“P2988R0: Std:Optional”</a> picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group.
+</p>
+
+<p>
+In 2024, the proposal to make optional a range, <a href="#citeproc_bib_item_9">“P3168R0: Give Std:Optional Range Support”</a>, as opposed to having a separate range of zero or one, was adopted. The reference implementation for <code>optional&lt;T&amp;&gt;</code> and the test cases for <code>views::maybe</code> were used to vet the additional interfaces for optional range support. This merged implementation became one of the first Beman libraries, where the library and the optional reference proposal  benefited immensly from the visibility and feedback.
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org660529e">
+<h3 id="org660529e">Why so long?</h3>
+<ul>
+<li>What were the concerns that made the process take so long?</li>
+<li>How were concerns addressed?</li>
+<li>What did we end up with?</li>
+<li>What remains to be done?</li>
+
+</ul>
+
+<aside class="notes">
+<p>
+
+</p>
+
+<p>
+The core of the difficulty has been that references are not values  and  types containing a reference do not have value semantics. References do not fit comfortably in the C++ type system. The core value semantic type that also has reference semantics is a pointer, but pointers have underconstrained and unsafe semantics. The long discussion has been a proxy for what reference semantic types should look like in value semantic types in the standard library, particularly for "sum" types, like <code>expected</code> and <code>variant</code>, but also for types such as <code>single</code>.
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orga7ddeb3">
+<h2 id="orga7ddeb3">Quick overview of optional&lt;T&amp;&gt;</h2>
+<p>
+A non-owning type with reference semantics with one additional value representing the empty state.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org72e1231">
+<h3 id="org72e1231">intro</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">T</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-keyword">class</span> <span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span> &amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-rainbow-delimiters-depth-1">{</span>
+      <span class="org-keyword">public</span>:
+        <span class="org-keyword">using</span> <span class="org-type">value_type</span> = T;
+        <span class="org-keyword">using</span> <span class="org-type">iterator</span> = implementation_defined;
+
+      <span class="org-keyword">public</span>:
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgf13da70">
+<h3 id="orgf13da70">Constructors</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">noexcept</span> = <span class="org-keyword">default</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-function-name">optional</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">nullopt_t</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span> : optional<span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-rainbow-delimiters-depth-1">{}</span>
+        <span class="org-keyword">constexpr</span> <span class="org-function-name">optional</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">const</span> <span class="org-type">optional</span> &amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> nboexcept = <span class="org-keyword">default</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgcd0a039">
+<h3 id="orgcd0a039">Constructors (continued)</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">Arg</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span> <span class="org-function-name">optional</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">in_place_t</span>, <span class="org-type">Arg</span> &amp;&amp;<span class="org-variable-name">arg</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                optional<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                optional<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">U</span><span class="org-rainbow-delimiters-depth-2">&gt;</span> &amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                optional<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">const</span> <span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">U</span><span class="org-rainbow-delimiters-depth-2">&gt;</span> &amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                optional<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">U</span><span class="org-rainbow-delimiters-depth-2">&gt;</span> &amp;&amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>
+                optional<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">const</span> <span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">U</span><span class="org-rainbow-delimiters-depth-2">&gt;</span> &amp;&amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org44e4551">
+<h3 id="org44e4551">Destructor</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> ~<span class="org-function-name">optional</span><span class="org-rainbow-delimiters-depth-1">()</span> = <span class="org-keyword">default</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org0803c96">
+<h3 id="org0803c96">Assignment</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> &amp;<span class="org-keyword">operator</span><span class="org-function-name">=</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">nullopt_t</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> &amp;<span class="org-keyword">operator</span><span class="org-function-name">=</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-keyword">const</span> <span class="org-type">optional</span> &amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span> = <span class="org-keyword">default</span>;
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-type">T</span> &amp;<span class="org-function-name">emplace</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-comment-delimiter">/*</span><span class="org-comment">see below</span><span class="org-comment-delimiter">*/</span><span class="org-rainbow-delimiters-depth-1">)</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgd94a031">
+<h3 id="orgd94a031">Swap</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">swap</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">optional</span> &amp;<span class="org-variable-name">rhs</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">noexcept</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org0a0225f">
+<h3 id="org0a0225f">Iterator</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">iterator</span> <span class="org-function-name">begin</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-type">iterator</span> <span class="org-function-name">end</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org0fcd75b">
+<h3 id="org0fcd75b">Observers</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> *<span class="org-keyword">operator</span><span class="org-function-name">-&gt;</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> &amp;<span class="org-keyword">operator</span><span class="org-function-name">*</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-keyword">explicit</span> <span class="org-keyword">operator</span> <span class="org-type">bool</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-type">bool</span> <span class="org-function-name">has_value</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span> <span class="org-keyword">noexcept</span>;
+        <span class="org-keyword">constexpr</span> <span class="org-type">T</span> &amp;<span class="org-function-name">value</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span>; <span class="org-comment-delimiter">// </span><span class="org-comment">freestanding-deleted</span>
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span> = <span class="org-type">remove_cv_t</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">T</span><span class="org-rainbow-delimiters-depth-2">&gt;</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">remove_cv_t</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-function-name">value_or</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">const</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org477d234">
+<h3 id="org477d234">Monadic Operations</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-keyword">auto</span> <span class="org-function-name">and_then</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">F</span> &amp;&amp;<span class="org-variable-name">f</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">const</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">invoke_result_t</span><span class="org-rainbow-delimiters-depth-2">&lt;</span><span class="org-type">F</span>, <span class="org-type">T</span> &amp;<span class="org-rainbow-delimiters-depth-2">&gt;</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-function-name">transform</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">F</span> &amp;&amp;<span class="org-variable-name">f</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">const</span>;
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">F</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-keyword">constexpr</span> <span class="org-type">optional</span> <span class="org-function-name">or_else</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">F</span> &amp;&amp;<span class="org-variable-name">f</span><span class="org-rainbow-delimiters-depth-1">)</span> <span class="org-keyword">const</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4b5307e">
+<h3 id="org4b5307e">Modifiers</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">reset</span><span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">noexcept</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org79967d3">
+<h3 id="org79967d3">Exposition-only Details</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp">      <span class="org-keyword">private</span>:
+        <span class="org-type">T</span> *<span class="org-variable-name">val</span> = <span class="org-constant">nullptr</span>; <span class="org-comment-delimiter">// </span><span class="org-comment">exposition only</span>
+
+        <span class="org-keyword">template</span> <span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-keyword">class</span> <span class="org-type">U</span><span class="org-rainbow-delimiters-depth-1">&gt;</span>
+        <span class="org-keyword">constexpr</span> <span class="org-type">void</span> <span class="org-function-name">convert_ref_init_val</span><span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span><span class="org-rainbow-delimiters-depth-1">)</span>; <span class="org-comment-delimiter">// </span><span class="org-comment">exposition only</span>
+<span class="org-rainbow-delimiters-unmatched">}</span>;
+</pre>
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org7c191af">
+<h2 id="org7c191af">The Papers</h2>
+<ul>
+<li>2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)</li>
+<li>2012: N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2)</li>
+<li>2013: N3527: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 3)</li>
+<li>2013: N3672: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 4)</li>
+<li>2015: N4529: Working Draft, C++ Extensions for Library Fundamentals, Version 2</li>
+<li>2016: P0220R0: Adopt Library Fundamentals TS  for c++17</li>
+<li>2018: P1175R0: A Simple and Practical Optional Reference for C++</li>
+<li>2020: P1683R0: References for Standard Library Vocabulary Types - An Optional Case Study</li>
+<li>2023: P2988R0: <code>std:optional&lt;T&amp;&gt;</code></li>
+
+</ul>
+
+
+<aside class="notes">
+<p>
+Optional was pulled at the last moment of 14 because of UB in the implementation technique of placement new with a storage buffer.
+Library TSs hadn't fully failed at that point.
+
+
+
+
+
+
+
+
+
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgc65f4b4">
+<h2 id="orgc65f4b4">The Problems</h2>
+<div class="outline-text-2" id="text-orgc65f4b4">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orgc6f1f81">
+<h3 id="orgc6f1f81">Assign or Rebind?</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span>;
+<span class="org-type">Cat</span> <span class="org-variable-name">loki</span>;
+<span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">Cat</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">maybeCat1</span>;
+<span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">Cat</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">maybeCat2</span><span class="org-rainbow-delimiters-depth-1">{</span>fynn<span class="org-rainbow-delimiters-depth-1">}</span>;
+maybeCat1 = fynn;
+maybeCat2 = loki;
+</pre>
+</div>
+<p>
+What do those assignments do?
+</p>
+
+<p>
+Ought they be allowed?
+</p>
+
+<p>
+State independence won out, eventually.
+</p>
+<aside class="notes">
+<p>
+
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-org965f6fd">
+<h3 id="org965f6fd">Non-generic template</h3>
+<p>
+<code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span></code> violates genericity.
+</p>
+
+<p>
+The "<code class="src src-cpp"><span class="org-type">vector</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">bool</span><span class="org-rainbow-delimiters-depth-1">&gt;</span></code>" problem only for an entire value category.
+</p>
+
+<p>
+Reference categories are weird and non-generic.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgb0c5f73">
+<h3 id="orgb0c5f73">Constexpr and UB issues</h3>
+<p>
+At the time of C++14 they couldn't quite be constexpr.
+</p>
+
+<p>
+<i>Placement new</i> had issues as did <code>union</code> techniques.
+</p>
+
+<p>
+We taught the compiler to <code>constexpr</code> more things.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org7b50873">
+<h2 id="org7b50873">Design Choices</h2>
+<div class="outline-text-2" id="text-org7b50873">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org4be50b1">
+<h3 id="org4be50b1"><code class="src src-cpp">make_optional<span class="org-rainbow-delimiters-depth-1">()</span></code></h3>
+<p>
+<code class="src src-cpp">make_optional<span class="org-rainbow-delimiters-depth-1">()</span></code> was largely supplanted by CTAD.
+</p>
+
+<p>
+<code class="src src-cpp">make_optional<span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;()</span></code> creates an <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span>T<span class="org-rainbow-delimiters-depth-1">&gt;</span></code>. Doing otherwise would have been worse.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgb0cb49c">
+<h3 id="orgb0cb49c">Trivial construction</h3>
+<p>
+<code class="src src-cpp">is_trivial</code> is deprecated in 26.
+</p>
+
+<p>
+No worse than they have to be.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgb029737">
+<h3 id="orgb029737">Value Category Affect on <code class="src src-cpp"><span class="org-constant">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span>::value<span class="org-rainbow-delimiters-depth-1">()</span> &amp;&amp;</code></h3>
+<p>
+What should <code class="src src-cpp"><span class="org-constant">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span>::value<span class="org-rainbow-delimiters-depth-1">()</span>&amp;&amp;;</code> return?
+</p>
+
+<p>
+Choose to model pointers, a reference semantic value type.
+</p>
+
+<p>
+Value category of the object does not affect value category of the referent.
+</p>
+
+<p>
+Otherwise an rvalue <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span></code> could enable moves from the referent.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgdf811a3">
+<h3 id="orgdf811a3">Shallow vs. Deep <code>const</code></h3>
+<p>
+What should <code class="src src-cpp"><span class="org-constant">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span>::value<span class="org-rainbow-delimiters-depth-1">()</span> <span class="org-keyword">const</span>;</code> return?
+</p>
+
+<p>
+Choose to model pointers, a reference semantic value type.
+</p>
+
+<p>
+A <code>const</code> pointer is not a pointer to <code>const</code>.
+</p>
+
+<p>
+All langauge references are <code>const</code>. An <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span></code> is a reference semantic type.
+</p>
+
+<p>
+Not a reference.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org2e38ca0">
+<h3 id="org2e38ca0">Conditional Explicit</h3>
+<p>
+Is <code class="src src-cpp">optional<span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;(</span>x<span class="org-rainbow-delimiters-depth-1">)</span></code> required to construct an <code>optional&lt;T&amp;&gt;</code>?
+</p>
+
+<p>
+I would have preferred to, but it was too painful.
+</p>
+
+<p>
+However lack of <code>explicit</code> makes the type exponentially more complex,  as there are more interactions between member functions.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org96cc024">
+<h3 id="org96cc024"><code class="src src-cpp">value_or<span class="org-rainbow-delimiters-depth-1">()</span></code></h3>
+<p>
+What should <code class="src src-cpp"><span class="org-constant">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span>::value_or<span class="org-rainbow-delimiters-depth-1">(</span><span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span><span class="org-rainbow-delimiters-depth-1">)</span>;</code> return?
+</p>
+
+<p>
+What is the "value type" for an optional?
+</p>
+
+<p>
+All choices are surprising to someone.
+</p>
+
+<p>
+Chose to return T, as that seems least dangerous.
+</p>
+
+<p>
+Future work: generic <code class="src src-cpp">nullable</code> functions.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgea46795">
+<h3 id="orgea46795"><code>in_place_t</code> construction</h3>
+<p>
+There is no "place" to construct in to.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org6ad0958">
+<h3 id="org6ad0958">Converting assignment</h3>
+<p>
+Avoid conversions that produce temporaries.
+</p>
+
+<p>
+Avoid confusion with <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">U</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span></code> or <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span>T<span class="org-rainbow-delimiters-depth-1">&gt;</span></code> constructors.
+</p>
+
+<p>
+Large <i>overload sets</i> are difficult to reason about.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgf688b9a">
+<h2 id="orgf688b9a">Reification Principles</h2>
+<div class="outline-text-2" id="text-orgf688b9a">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-orga0f9752">
+<h3 id="orga0f9752">Construction from temporary</h3>
+<p>
+Avoid taking references to temporaries.
+</p>
+
+<p>
+Rules out some safe cases, disallows many dangerous cases.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgc144118">
+<h3 id="orgc144118">Deleting dangling overloads</h3>
+<p>
+Delete, rather than remove via <code>concept</code>,  function overloads that produce dangling references.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org9334314">
+<h3 id="org9334314">Assignment of <code class="src src-cpp"><span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span></code></h3>
+<p>
+Assignment of an optional&lt;T&amp;&gt; is equivalent to a pointer copy.
+</p>
+
+<p>
+All assignments are through the single function.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orga727d03">
+<h2 id="orga727d03">The T&amp; Problem</h2>
+<div class="outline-text-2" id="text-orga727d03">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org7a90ef4">
+<h3 id="org7a90ef4">Overloaded syntax</h3>
+<p>
+Used for:
+</p>
+<ul>
+<li class="fragment appear">Parameter Passing</li>
+<li class="fragment appear">Named alias</li>
+<li class="fragment appear">Non-null const pointer in a struct</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org84e0e4d">
+<h3 id="org84e0e4d">References are not Data</h3>
+<p>
+They are CoData.
+</p>
+
+<p>
+Much more about this in my Streams talk.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org1278e30">
+<h3 id="org1278e30"><code>T&amp;</code> in an Generic Algebraic Type</h3>
+<ul>
+<li class="fragment appear">Request for reference semantics.</li>
+<li class="fragment appear">Not a request for T&amp; weirdness.</li>
+<li class="fragment appear">Biggest problem for Union-like types &#x2013; Sum Types.</li>
+
+</ul>
+</section>
+</section>
+<section>
+<section id="slide-org5300e0d">
+<h2 id="org5300e0d">Project Beman</h2>
+<div class="outline-text-2" id="text-org5300e0d">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org381dae3">
+<h3 id="org381dae3">Began last year at C++Now 2024</h3>
+<p>
+Not a requirement for Standardization.
+</p>
+
+<p>
+LEWG is getting better at asking for implementation of exact proposal.
+</p>
+
+<p>
+Details matter.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org987e249">
+<h3 id="org987e249">Pre-existing smd::optional</h3>
+<p>
+Confirmed at Tokyo, live, that the range-ification would work for my test cases for <code>views::maybe</code>.
+</p>
+
+<p>
+Unfortunately <code>smd::optional</code> used early-Modern CMake.
+</p>
+
+<p>
+This meant rework to bring it to current standards.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgc4abbd4">
+<h3 id="orgc4abbd4">The ref-stealing bug found</h3>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span>;
+<span class="org-constant">std</span>::<span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">Cat</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">maybeCatRef</span><span class="org-rainbow-delimiters-depth-1">{</span>fynn<span class="org-rainbow-delimiters-depth-1">}</span>;
+<span class="org-constant">std</span>::<span class="org-type">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">Cat</span><span class="org-rainbow-delimiters-depth-1">&gt;</span> <span class="org-variable-name">maybeCat</span>;
+maybeCat = <span class="org-constant">std</span>::move<span class="org-rainbow-delimiters-depth-1">(</span>maybeCatRef<span class="org-rainbow-delimiters-depth-1">)</span>;
+<span class="org-comment-delimiter">// </span><span class="org-comment">fynn is moved from</span>
+</pre>
+</div>
+
+<p>
+Now fixed.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-org1040a08">
+<h4 id="org1040a08">The fix</h4>
+<p>
+Don't move the result of operator*, move the rhs and apply operator*().
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-comment-delimiter">//</span><span class="org-comment">instead of</span>
+*<span class="org-constant">std</span>::move<span class="org-rainbow-delimiters-depth-1">(</span>rhs<span class="org-rainbow-delimiters-depth-1">)</span>
+<span class="org-comment-delimiter">// </span><span class="org-comment">use</span>
+<span class="org-constant">std</span>::move<span class="org-rainbow-delimiters-depth-1">(</span>*rhs<span class="org-rainbow-delimiters-depth-1">)</span>
+</pre>
+</div>
+
+<p>
+Because
+</p>
+<div class="org-src-container">
+
+<pre class="src src-cpp"><span class="org-constant">std</span>::<span class="org-constant">optional</span><span class="org-rainbow-delimiters-depth-1">&lt;</span><span class="org-type">T</span>&amp;<span class="org-rainbow-delimiters-depth-1">&gt;</span>::<span class="org-keyword">operator</span>*<span class="org-rainbow-delimiters-depth-1">()</span> &amp;&amp; -&gt; T&amp;; <span class="org-comment-delimiter">// </span><span class="org-comment">overload not actually present</span>
+</pre>
+</div>
+
+<p>
+does not return an rvalue reference.
+</p>
+
+<aside class="notes">
+<p>
+Actually doesn't exist.
+</p>
+
+</aside>
+</section>
+</section>
+<section>
+<section id="slide-orgeeb5d22">
+<h2 id="orgeeb5d22">Future Standards Work</h2>
+<div class="outline-text-2" id="text-orgeeb5d22">
+</div>
+</section>
+</section>
+<section>
+<section id="slide-org761e7e9">
+<h3 id="org761e7e9"><code class="src src-cpp"><span class="org-constant">std</span>::expected</code></h3>
+</section>
+</section>
+<section>
+<section id="slide-org4df307d">
+<h3 id="org4df307d"><code class="src src-cpp"><span class="org-constant">std</span>::variant</code></h3>
+</section>
+</section>
+<section>
+<section id="slide-org116e317">
+<h3 id="org116e317"><code class="src src-cpp"><span class="org-constant">std</span>::<span class="org-constant">views</span>::single</code></h3>
+</section>
+</section>
+<section>
+<section id="slide-org626cbcd">
+<h3 id="org626cbcd"><code class="src src-cpp">rebindable_reference</code></h3>
+</section>
+</section>
+<section>
+<section id="slide-org4bba1e0">
+<h3 id="org4bba1e0">Exposition-only <code class="src src-cpp"><span class="org-type">movable_box</span><span class="org-rainbow-delimiters-depth-1">&lt;</span>T<span class="org-rainbow-delimiters-depth-1">&gt;</span></code></h3>
+</section>
+</section>
+<section>
+<section id="slide-orga995dce">
+<h2 id="orga995dce">Questions?</h2>
+<p>
+Remember a question starts with:
+</p>
+
+<ul>
+<li class="fragment current-visible">who</li>
+<li class="fragment current-visible">what</li>
+<li class="fragment current-visible">when</li>
+<li class="fragment current-visible">where</li>
+<li class="fragment current-visible">how</li>
+<li class="fragment current-visible">why</li>
+
+</ul>
+
+</section>
+<section>
+<p>
+or
+</p>
+<dl>
+<dt>A propositional statement</dt><dd>a statement that has a truth value, either true or false, but not both.</dd>
+
+</dl>
+
+</section>
+<section>
+<p>
+and goes up at the end.
+</p>
+
+</section>
+<section>
+<blockquote>
+<p>
+"More of a comment than a question &#x2026;"
+</p>
+</blockquote>
+<p>
+Is a propositional statement, but hold them for a moment.
+</p>
+</section>
+</section>
+<section>
+<section id="slide-orgeb8e390">
+<h2 id="orgeb8e390">Comments?</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org5caac9a">
+<h2 id="org5caac9a">Thank You!</h2>
+
+</section>
+</section>
+<section>
+<section id="slide-org390e983" data-visibility="hidden">
+<h2 id="org390e983">Bibliography</h2>
+<style>.csl-entry{text-indent: -1.5em; margin-left: 1.5em;}</style><div class="csl-bib-body">
+  <div class="csl-entry"><a id="citeproc_bib_item_1"></a>Cacciola, F., and A. Krzemieński. 2012. “N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2).” https://wg21.link/n3406; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_2"></a>———. 2013a. “N3527: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2).” https://wg21.link/n3527; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_3"></a>———. 2013b. “N3672: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 4).” https://wg21.link/n3672; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_4"></a>Cacciola, Fernando. 2005. “N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1).” https://wg21.link/n1878; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_5"></a>Dawes, Beman. 2016. “P0220R0: Adopt Library Fundamentals Ts for c++17.” https://wg21.link/p0220r0; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_6"></a>Downey, Steve. 2023. “P2988R0: Std:Optional.” https://wg21.link/p2988r0; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_7"></a>Meneide, JeanHeyd. 2018. “P1175R0: A Simple and Practical Optional Reference for c++.” https://wg21.link/p1175r0; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_8"></a>———. 2020. “P1683R0: References for Standard Library Vocabulary Types - an Optional Case Study.” https://wg21.link/p1683r0; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_9"></a>Sankel, David, Marco Foco, Darius Neațu, and Barry Revzin. 2024. “P3168R0: Give Std:Optional Range Support.” https://wg21.link/p3168r0; WG21.</div>
+  <div class="csl-entry"><a id="citeproc_bib_item_10"></a>Yaskin, Jeffrey. 2015. “N4529: Working Draft, c++ Extensions for Library Fundamentals, Version 2.” https://wg21.link/n4529; WG21.</div>
+</div>
+</section>
+</section>
+</div>
+</div>
+<style type="text/css">
+    /* 1. Style header/footer <div> so they are positioned as desired. */
+    #header-left {
+        position: absolute;
+        top: 0%;
+        left: 0%;
+    }
+    #header-right {
+        position: absolute;
+        top: 0%;
+        right: 0%;
+    }
+    #footer-left {
+        position: absolute;
+        bottom: 0%;
+        left: 0%;
+        font-size: 0.5em;
+    }
+</style>
+
+<!-- 2. Create hidden header/footer <div> -->
+<div id="hidden" style="display:none;">
+<div id="header">
+<div id="footer-left">© 2025 Bloomberg Finance L.P. All rights reserved.</div>
+</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript">
+// 3. On Reveal.js ready event, copy header/footer <div> into each `.slide-background` <div>
+var header = $('#header').html();
+if ( window.location.search.match( /print-pdf/gi ) ) {
+Reveal.addEventListener( 'ready', function( event ) {
+                                  $('.slide-background').append(header);
+                                  });
+}
+else {
+$('div.reveal').append(header);
+}
+</script>
+<script src="./reveal.js/dist/reveal.js"></script>
+<script src="./reveal.js/plugin/math/math.js"></script>
+<script src="./reveal.js/plugin/markdown/markdown.js"></script>
+<script src="./reveal.js/plugin/notes/notes.js"></script>
+<script src="./reveal.js/plugin/search/search.js"></script>
+<script src="./reveal.js/plugin/zoom/zoom.js"></script>
+<script>
+// Full list of configuration options available here:
+// https://github.com/hakimel/reveal.js#configuration
+Reveal.initialize({
+
+controls: true,
+progress: true,
+history: false,
+center: true,
+slideNumber: 'c',
+rollingLinks: false,
+keyboard: true,
+mouseWheel: false,
+fragmentInURL: false,
+hashOneBasedIndex: false,
+pdfSeparateFragments: true,
+overview: true,
+width: 1600,
+height: 900,
+
+transition: 'fade',
+transitionSpeed: 'default',
+showNotes: window.location.search.match( /print-pdf/gi ) ? 'separate-page' : false,
+pdfSeparateFragments: true,
+
+// Plugins with reveal.js 4.x
+plugins: [ RevealMath, RevealMarkdown, RevealNotes, RevealSearch, RevealZoom ],
+
+// Optional libraries used to extend reveal.js
+dependencies: [
+]
+
+});
+</script>
+</body>
+</html>
