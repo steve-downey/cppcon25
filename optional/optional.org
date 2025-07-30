@@ -2,7 +2,7 @@
 #+OPTIONS: broken-links:nil c:nil creator:nil d:(not "LOGBOOK") date:t e:t
 #+OPTIONS: email:nil f:t inline:t num:nil p:nil pri:nil prop:nil stat:t tags:t
 #+OPTIONS: tasks:t tex:t timestamp:t title:t toc:nil todo:t |:t
-#+TITLE: ~std::optional<T&>~
+#+TITLE: ~optional<T&>~
 #+SUBTITLE: A Case Study
 #+DATE: <2024-02-01 Thu>
 #+AUTHOR: Steve Downey
@@ -42,17 +42,18 @@
 #+REVEAL_EXTRA_CSS: ../etc/modus-vivendi-tinted.css
 #+REVEAL_THEME: ../etc/my_theme.css
 #+REVEAL_EXTRA_CSS: ../etc/footer.css
-#+REVEAL_TITLE_SLIDE: <p>
-#+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
+#+REVEAL_TITLE_SLIDE: <h1>%t</h1><h2>%s</h2><h3>%A %a</h3>
+# #+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
 
-#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
-# #+REVEAL_ROOT: ./reveal.js
+# #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+REVEAL_ROOT: ./reveal.js
 #+REVEAL_VERSION: 4
 
 #+REVEAL_HLEVEL: 4
 #+REVEAL_EXPORT_NOTES_TO_PDF: separate-page
 #+REVEAL_DEFAULT_FRAG_STYLE: (appear)
 #+REVEAL_EXTRA_OPTIONS: pdfSeparateFragments: true
+#+OPTIONS: reveal_single_file:t
 
 #+CITE_EXPORT: csl ../etc/chicago-author-date.csl
 #+BIBLIOGRAPHY: ../etc/wg21.bib
@@ -77,7 +78,7 @@ Optionals were first proposed for C++ in 2005.
 
 Optional<T> where T is constrained not to be a reference was added in 2017.
 
-Optionals for lvalue references are on track for C++26.
+Optionals for lvalue references were voted in at the Sofia meeting in June, 2025
 
 #+begin_notes
 
@@ -95,12 +96,14 @@ In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as oppo
 
 #+begin_notes
 
-The core of the difficulty has been that references are not values  and  types containing a reference do not have value semantics. References do not fit comfortably in the C++ type system. The core value semantic type that also has reference semantics is a pointer, but pointers have underconstrained and unsafe semantics. The long discussion has been a proxy for what reference semantic types should look like in value semantic types in the standard library, particularly for "sum" types, like ~expected~ and ~variant~, but also for types such as ~single~.
+The core of the difficulty has been that references are not values  and  types containing a reference do not have value semantics. References do not fit comfortably in the C++ type system. The core value semantic type that also has reference semantics is a pointer, but pointers have underconstrained and unsafe semantics. The long discussion has been a proxy for what reference semantic types should look like in value semantic types in the standard library, particularly for "sum" types, like ~expected~ and ~variant~.
 #+end_notes
 
 * Quick overview of optional<T&>
 
-A non-owning type with reference semantics with one additional value representing the empty state.
+- A non-owning type,
+- with reference semantics,
+- with one additional value representing the empty state.
 
 ** intro
 #+transclude: [[file:optional-synopsis.hpp::fb8602f8-ef1d-49ce-94ed-a141adfe7a5c]] :lines 2- :src cpp :end "fb8602f8-ef1d-49ce-94ed-a141adfe7a5c end"
@@ -136,34 +139,6 @@ A non-owning type with reference semantics with one additional value representin
 ** Exposition-only Details
 #+transclude: [[file:optional-synopsis.hpp::339cf95f-5e8a-48b3-b745-7e40ae2eaa23]] :lines 2- :src cpp :end "339cf95f-5e8a-48b3-b745-7e40ae2eaa23 end"
 
-* The Papers
-- 2005: N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1)
-- 2012: N3406: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 2)
-- 2013: N3527: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 3)
-- 2013: N3672: A Proposal to Add a Utility Class to Represent Optional Objects (Revision 4)
-- 2015: N4529: Working Draft, C++ Extensions for Library Fundamentals, Version 2
-- 2016: P0220R0: Adopt Library Fundamentals TS  for c++17
-- 2018: P1175R0: A Simple and Practical Optional Reference for C++
-- 2020: P1683R0: References for Standard Library Vocabulary Types - An Optional Case Study
-- 2023: P2988R0: =std:optional<T&>=
-
-
-#+begin_notes
-Optional was pulled at the last moment of 14 because of UB in the implementation technique of placement new with a storage buffer.
-Library TSs hadn't fully failed at that point.
-[cite/n:@N1878]
-[cite/n:@N3406]
-[cite/n:@N3527]
-[cite/n:@N3672]
-[cite/n:@N4529]
-[cite/n:@P0220R0]
-[cite/n:@P1175R0]
-[cite/n:@P1683R0]
-[cite/n:@P2988R0]
-#+end_notes
-
-
-
 * The Problems
 ** Assign or Rebind?
 #+begin_src cpp
@@ -180,45 +155,33 @@ Ought they be allowed?
 
 State independence won out, eventually.
 #+begin_notes
-
+What assignment does is not dependent on the state of the optional. It always rebinds the "reference", which is not possible with a C++ reference in a struct.
 #+end_notes
 ** Non-generic template
-src_cpp[:exports code]{optional<T&>} violates genericity.
+~optional<T&>~ violates genericity.
 
-The "src_cpp[:exports code]{vector<bool>}" problem only for an entire value category.
+The "~vector<bool>~" problem only for an entire value category.
 
 Reference categories are weird and non-generic.
-#+begin_notes
-#+end_notes
-** Constexpr and UB issues
-At the time of C++14 they couldn't quite be constexpr.
-
-/Placement new/ had issues as did ~union~ techniques.
-
-We taught the compiler to ~constexpr~ more things.
 #+begin_notes
 #+end_notes
 
 * Design Choices
 ** src_cpp[:exports code]{make_optional()}
-src_cpp[:exports code]{make_optional()} was largely supplanted by CTAD.
+~make_optional()~ was largely supplanted by CTAD.
 
-src_cpp[:exports code]{make_optional<T&>()} creates an src_cpp[:exports code]{optional<T>}. Doing otherwise would have been worse.
+~make_optional<T&>()~ creates an ~optional<T>~.
+
+Doing otherwise would have been worse.
 
 #+begin_notes
 #+end_notes
-** Trivial construction
-src_cpp[:exports code]{is_trivial} is deprecated in 26.
-
-No worse than they have to be.
-#+begin_notes
-#+end_notes
-** Value Category Affect on src_cpp[:exports code]{optional<T&>::value() &&}
-What should src_cpp[:exports code]{optional<T&>::value()&&;} return?
+** Value Category's Affect on src_cpp[:exports code]{optional<T&>::value() &&}
+What should src_cpp[:exports code]{optional<T&>::value() &&;} return?
 
 Choose to model pointers, a reference semantic value type.
 
-Value category of the object does not affect value category of the referent.
+The value category of the object does not affect value category of the referent.
 
 Otherwise an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
 #+begin_notes
@@ -230,18 +193,24 @@ Choose to model pointers, a reference semantic value type.
 
 A ~const~ pointer is not a pointer to ~const~.
 
-All langauge references are ~const~. An src_cpp[:exports code]{optional<T&>} is a reference semantic type.
+All langauge references are ~const~.
+
+An src_cpp[:exports code]{optional<T&>} is a reference semantic type.
 
 Not a reference.
 
 #+begin_notes
 #+end_notes
 ** Conditional Explicit
-Is src_cpp[:exports code]{optional<T&>(x)} required to construct an ~optional<T&>~?
+Is a spelled out src_cpp[:exports code]{optional<T&>(x)} required to construct an ~optional<T&>~?
 
-I would have preferred to, but it was too painful.
+Or can an ~optional<T&>~ be constructed implicitly from a ~t~?
 
-However lack of ~explicit~ makes the type exponentially more complex,  as there are more interactions between member functions.
+I would have preferred requiring explicit, but it was too painful in practice.
+
+Lack of ~explicit~ makes the type exponentially more complex.
+
+There are more interactions between member functions.
 #+begin_notes
 #+end_notes
 ** src_cpp[:exports code]{value_or()}
@@ -253,9 +222,10 @@ All choices are surprising to someone.
 
 Chose to return T, as that seems least dangerous.
 
-Future work: generic src_cpp[:exports code]{nullable} functions.
+It is what ~optional<T>~ does.
 
 #+begin_notes
+Future work: generic src_cpp[:exports code]{nullable} functions.
 #+end_notes
 ** ~in_place_t~ construction
 There is no "place" to construct in to.
@@ -288,38 +258,15 @@ Assignment of an optional<T&> is equivalent to a pointer copy.
 All assignments are through the single function.
 #+begin_notes
 #+end_notes
-* The T& Problem
-** Overloaded syntax
-Used for:
-#+ATTR_REVEAL: :frag (appear)
-- Parameter Passing
-- Named alias
-- Non-null const pointer in a struct
-
-** References are not Data
-They are CoData.
-
-Much more about this in my Streams talk.
-#+begin_notes
-#+end_notes
-** ~T&~ in an Generic Algebraic Type
-#+ATTR_REVEAL: :frag (appear)
-- Request for reference semantics.
-- Not a request for T& weirdness.
-- Biggest problem for Union-like types -- Sum Types.
-
-#+begin_notes
-#+end_notes
 * Project Beman
 ** Began last year at C++Now 2024
 
 Not a requirement for Standardization.
 
-LEWG is getting better at asking for implementation of exact proposal.
-
 Details matter.
 
 #+begin_notes
+LEWG is getting better at asking for implementation of exact proposal.
 #+end_notes
 
 ** Pre-existing smd::optional
@@ -360,29 +307,21 @@ std::optional<T&>::operator*() && -> T&; // overload not actually present
 does not return an rvalue reference.
 
 #+begin_notes
-Actually doesn't exist.
-#+end_notes
-* Future Standards Work
-** src_cpp[:exports code]{std::expected}
 
-#+begin_notes
 #+end_notes
-** src_cpp[:exports code]{std::variant}
+* The Modal Use-Case
+The expected most common use is for looking up something and failure is not exceptional.
 
-#+begin_notes
-#+end_notes
-** src_cpp[:exports code]{std::views::single}
+#+begin_src cpp
+constexpr optional<mapped_type&> get(const key_type& k);
+#+end_src
 
-#+begin_notes
-#+end_notes
-** src_cpp[:exports code]{rebindable_reference}
+We plan to add this to associative containers for C++29.
 
-#+begin_notes
-#+end_notes
-** Exposition-only src_cpp[:exports code]{movable_box<T>}
+** P3091 by Pablo Halpern
+Better Lookups for ~map~, ~unordered_map~, and ~flat_map~
 
-#+begin_notes
-#+end_notes
+
 
 * Questions?
 Remember a question starts with:
