@@ -20,18 +20,18 @@ set(EXAMPLES
 
 foreach(example ${EXAMPLES})
     # Add example executable.
-    add_executable(${example} "")
+    add_executable(beman_optional_${example} "")
 
     # Add example source file.
-    target_sources(${example} PRIVATE ${example}.cpp)
+    target_sources(beman_optional_${example} PRIVATE ${example}.cpp)
 
     # Link example with the library.
-    target_link_libraries(${example} "${BEMAN_OPTIONAL_LIBRARY}")
+    target_link_libraries(beman_optional_${example} "${BEMAN_OPTIONAL_LIBRARY}")
 
     # Install .
     install(
         TARGETS
-            ${example}
+            beman_optional_${example}
             COMPONENT
             beman_optional_examples
             DESTINATION
