@@ -111,9 +111,9 @@ The core of the difficulty has been that references are not values  and  types c
 #+end_notes
 
 ** Algebraically
-- ~T + 1~
+ ~T + 1~
 
-- ~std::variant<T, std::monostate>~
+ ~std::variant<T, std::monostate>~
 
 #+begin_notes
 #+end_notes
@@ -182,6 +182,8 @@ What do those assignments do?
 Ought they be allowed?
 
 State independence won out, eventually.
+
+*ALWAYS* rebind.
 #+begin_notes
 What assignment does is not dependent on the state of the optional. It always rebinds the "reference", which is not possible with a C++ reference in a struct.
 #+end_notes
