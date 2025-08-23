@@ -68,10 +68,14 @@
 
 Intended to conform to [[https://www.w3.org/WAI/WCAG2AAA-Conformance][Web Content Accessibility Guidelines Level AAA]]
 
-#+ATTR_HTML: :height 32 :width 88px
-[[../etc/wcag2.2AAA-blue.svg]]
+
+#+REVEAL_HTML: <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance" title="Explanation of WCAG 2 Level AAA conformance">  <img height="32" width="88"       src="https://www.w3.org/WAI/WCAG22/wcag2.2AAA-blue" alt="Level AAA conformance, W3C WAI Web Content Accessibility Guidelines 2.2"></a>
 
 #+begin_notes
+Please try to be considerate when making presentations. Accessibility helps everyone.
+
+Try to present working  code, even in slideware.
+
 #+end_notes
 * Standardising Optionals over References
 Optionals were first proposed for C++ in 2005.
@@ -99,47 +103,71 @@ In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as oppo
 The core of the difficulty has been that references are not values  and  types containing a reference do not have value semantics. References do not fit comfortably in the C++ type system. The core value semantic type that also has reference semantics is a pointer, but pointers have underconstrained and unsafe semantics. The long discussion has been a proxy for what reference semantic types should look like in value semantic types in the standard library, particularly for "sum" types, like ~expected~ and ~variant~.
 #+end_notes
 
-* Quick overview of optional<T&>
+* Quick overview of optional<T>
+- An owning type,
+- with value semantics,
+- with one additional out-of-band value.
+#+begin_notes
+#+end_notes
+
+** Algebraically
+- ~T + 1~
+
+- ~std::variant<T, std::monostate>~
+
+#+begin_notes
+#+end_notes
+
+** Core Use Case
+#+transclude: [[file:./code/tests/slides.t.cpp::898237b6-5a21-439f-94be-b383a439e47e]] :lines 2- :src cpp :end "898237b6-5a21-439f-94be-b383a439e47e end"
+
+*** C++26 Range Version
+#+transclude: [[file:./code/tests/slides.t.cpp::848bce37-c7d0-48c4-ab5d-8f77cc436385]] :lines 2- :src cpp :end "848bce37-c7d0-48c4-ab5d-8f77cc436385 end"
+
+** Default Optional Parameter
+#+transclude: [[file:./code/tests/slides.t.cpp::f42adfde-5cf2-4c68-8453-83f85ccece63]] :lines 2- :src cpp :end "f42adfde-5cf2-4c68-8453-83f85ccece63 end"
+
+#+transclude: [[file:./code/tests/slides.t.cpp::e1003632-659b-4d3b-a5a8-2045c1e7a67d]] :lines 2- :src cpp :end "e1003632-659b-4d3b-a5a8-2045c1e7a67d end"
+
+#+begin_notes
+#+end_notes
+*  Quick overview of optional<T&>
 
 - A non-owning type,
-- with reference semantics,
+- with reference and value semantics,
 - with one additional value representing the empty state.
+#+begin_notes
+#+end_notes
+** Core Use Case
+Looking up something for modification.
+*** Today
+#+transclude: [[file:./code/tests/slides.t.cpp::31481e6d-8401-4859-92b2-908af1c09fd2]] :lines 2- :src cpp :end "31481e6d-8401-4859-92b2-908af1c09fd2 end"
 
-** intro
-#+transclude: [[file:optional-synopsis.hpp::fb8602f8-ef1d-49ce-94ed-a141adfe7a5c]] :lines 2- :src cpp :end "fb8602f8-ef1d-49ce-94ed-a141adfe7a5c end"
+#+begin_notes
+#+end_notes
 
-** Constructors
+*** With optional<int&>
+#+transclude: [[file:./code/tests/slides.t.cpp::a945e141-bc08-4cf0-89ba-060068ffca00]] :lines 2- :src cpp :end "a945e141-bc08-4cf0-89ba-060068ffca00 end"
 
-#+transclude: [[file:optional-synopsis.hpp::2f167cef-1888-487e-9fd2-c26cc27c3c92]] :lines 2- :src cpp :end "2f167cef-1888-487e-9fd2-c26cc27c3c92 end"
+#+begin_notes
+#+end_notes
 
-** Constructors (continued)
-#+transclude: [[file:optional-synopsis.hpp::f6696e02-de4e-4200-bd98-1bb3027e2d72]] :lines 2- :src cpp :end "f6696e02-de4e-4200-bd98-1bb3027e2d72 end"
+** Optional Reference Parameter
+Instead of a pointer:
+#+transclude: [[file:./code/tests/slides.t.cpp::c089386c-ee92-4d95-87bb-10cf878b9882]] :lines 2- :src cpp :end "c089386c-ee92-4d95-87bb-10cf878b9882 end"
 
-** Destructor
-#+transclude: [[file:optional-synopsis.hpp::b19ae341-c9bf-4ada-9c34-dfd955947cc9]] :lines 2- :src cpp :end "b19ae341-c9bf-4ada-9c34-dfd955947cc9 end"
+#+begin_notes
+#+end_notes
 
-** Assignment
-#+transclude: [[file:optional-synopsis.hpp::3109c3b6-fce3-42c1-88e9-be8b353aadb9]] :lines 2- :src cpp :end "3109c3b6-fce3-42c1-88e9-be8b353aadb9 end"
+*  Existing Problems with Optional
+Construction and assignment from the underlying T or a type convertable to a T produces inevitable surprises and deep complication in the implementation.
 
-** Swap
-#+transclude: [[file:optional-synopsis.hpp::904f4d4b-de24-459f-bc07-00a93a45c9dc]] :lines 2- :src cpp :end "904f4d4b-de24-459f-bc07-00a93a45c9dc end"
+Reasoning about overload sets is difficult for humans.
+#+begin_notes
+#+end_notes
 
-** Iterator
-#+transclude: [[file:optional-synopsis.hpp::646f38bf-9b8b-482a-b68d-24297c1c2636]] :lines 2- :src cpp :end "646f38bf-9b8b-482a-b68d-24297c1c2636 end"
 
-** Observers
-#+transclude: [[file:optional-synopsis.hpp::5383e2b9-ee37-4c47-8cee-4dd143dd8d27]] :lines 2- :src cpp :end "5383e2b9-ee37-4c47-8cee-4dd143dd8d27 end"
-
-** Monadic Operations
-#+transclude: [[file:optional-synopsis.hpp::4f2fafac-9479-47ce-8f15-983c315af300]] :lines 2- :src cpp :end "4f2fafac-9479-47ce-8f15-983c315af300 end"
-
-** Modifiers
-#+transclude: [[file:optional-synopsis.hpp::62d12978-14b9-4ecf-afb0-e80e25062a3b]] :lines 2- :src cpp :end "62d12978-14b9-4ecf-afb0-e80e25062a3b end"
-
-** Exposition-only Details
-#+transclude: [[file:optional-synopsis.hpp::339cf95f-5e8a-48b3-b745-7e40ae2eaa23]] :lines 2- :src cpp :end "339cf95f-5e8a-48b3-b745-7e40ae2eaa23 end"
-
-* The Problems
+* The Design Problems for References
 ** Assign or Rebind?
 #+begin_src cpp
 Cat fynn;
