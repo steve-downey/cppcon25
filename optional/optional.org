@@ -111,9 +111,9 @@ The core of the difficulty has been that references are not values  and  types c
 #+end_notes
 
 ** Algebraically
-- ~T + 1~
+~T + 1~
 
-- ~std::variant<T, std::monostate>~
+~std::variant<T, std::monostate>~
 
 #+begin_notes
 #+end_notes

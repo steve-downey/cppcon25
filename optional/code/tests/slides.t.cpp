@@ -99,10 +99,17 @@ struct Logger {
 
 
 // c089386c-ee92-4d95-87bb-10cf878b9882
-void doSomething(std::string data, optional<Logger&> logger) {
+void doSomething(std::string const& data,
+                 optional<Logger&> logger = {}) {
     for (auto l : logger) {
         l.log(data);
     }
     return;
 }
 // c089386c-ee92-4d95-87bb-10cf878b9882 end
+
+TEST(SlideTest, LogSomething) {
+    Logger logger;
+    doSomething("");
+    doSomething("log this", logger);
+}
