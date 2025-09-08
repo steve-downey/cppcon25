@@ -42,8 +42,10 @@
 #+REVEAL_EXTRA_CSS: ../etc/modus-vivendi-tinted.css
 #+REVEAL_THEME: ../etc/my_theme.css
 #+REVEAL_EXTRA_CSS: ../etc/footer.css
-#+REVEAL_TITLE_SLIDE: <h1>%t</h1><h2>%s</h2><h3>%A %a</h3>
-# #+REVEAL_TITLE_SLIDE_BACKGROUND: ./title.png
+
+# #+REVEAL_TITLE_SLIDE: <h1>%t</h1><h2>%s</h2><h3>%A %a</h3>
+#+REVEAL_TITLE_SLIDE: <p>
+#+REVEAL_TITLE_SLIDE_BACKGROUND: ./Title_Card.png
 
 # #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+REVEAL_ROOT: ./reveal.js
@@ -376,6 +378,8 @@ and goes up at the end.
 "More of a comment than a question ..."
 #+end_quote
 Is a propositional statement, but hold them for a moment.
+* Questions?
+
 * Comments?
 
 * Thank You!
