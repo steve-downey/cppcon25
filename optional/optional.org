@@ -44,8 +44,8 @@
 #+REVEAL_EXTRA_CSS: ../etc/footer.css
 
 # #+REVEAL_TITLE_SLIDE: <h1>%t</h1><h2>%s</h2><h3>%A %a</h3>
-#+REVEAL_TITLE_SLIDE: <p>
-#+REVEAL_TITLE_SLIDE_BACKGROUND: ./Title_Card.png
+#+REVEAL_TITLE_SLIDE: <p/>
+#+REVEAL_TITLE_SLIDE_BACKGROUND: ./title_card.png
 
 # #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+REVEAL_ROOT: ./reveal.js
@@ -61,6 +61,19 @@
 #+BIBLIOGRAPHY: ../etc/wg21.bib
 #+BIBLIOGRAPHY: ../etc/local.bib
 
+* ~std::optional<T&>~
+** Optional Over References
+   :PROPERTIES:
+   :UNNUMBERED: notoc
+   :NOSLIDE: t
+   :REVEAL_SLIDE_FOOTER:
+   :END:
+   Steve Downey
+
+   Bloomberg
+
+   © 2025 Bloomberg Finance L.P. All rights reserved.
+
 * Colophon
 
 - Slideware: [[https://revealjs.com/][reveal.js]]
@@ -69,7 +82,6 @@
 - Color Themes: [[https://github.com/protesilaos/modus-themes][Modus]] Vivendi and Operandi Tinted
 
 Intended to conform to [[https://www.w3.org/WAI/WCAG2AAA-Conformance][Web Content Accessibility Guidelines Level AAA]]
-
 
 #+REVEAL_HTML: <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance" title="Explanation of WCAG 2 Level AAA conformance">  <img height="32" width="88"       src="https://www.w3.org/WAI/WCAG22/wcag2.2AAA-blue" alt="Level AAA conformance, W3C WAI Web Content Accessibility Guidelines 2.2"></a>
 
@@ -82,13 +94,13 @@ Try to present working  code, even in slideware.
 * Standardising Optionals over References
 Optionals were first proposed for C++ in 2005.
 
-Optional<T> where T is constrained not to be a reference was added in 2017.
+Optional<T>, where T is constrained not to be a reference, was added in 2017.
 
 Optionals for lvalue references were voted in at the Sofia meeting in June, 2025
 
 #+begin_notes
 
-This talk will discuss the early history, starting with Boost.Optional and [cite/title/b:@N1878], and what the early concerns were for the reference specialization.  [cite/title/b:@P1175R0] ,  reproposed reference support for C++20, which was not adopted. [cite/title/b:@P1683R0],  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. [cite/title/b:@P2988R0] picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group.
+This talk will discuss the early history, starting with Boost.Optional and [cite/title/b:@N1878], and what the early concerns were for the reference specialization.  [cite/title/b:@P1175R0] ,  reproposed reference support for C++20, which was not adopted. [cite/title/b:@P1683R0],  in 2020 surveyed existing behavior of optional references in the wild, and pointed out the trap of assingment behaviour being state dependent. [cite/title/b:@P2988R0] picked up the torch again in 2023, of which revision 9 is the proposal which is design approved by the Library Evolution Working Group, and R13 was adopted.
 
 In 2024, the proposal to make optional a range, [cite/title/b:@P3168R0], as opposed to having a separate range of zero or one, was adopted. The reference implementation for ~optional<T&>~ and the test cases for ~views::maybe~ were used to vet the additional interfaces for optional range support. This merged implementation became one of the first Beman libraries, where the library and the optional reference proposal  benefited immensly from the visibility and feedback.
 
@@ -187,7 +199,9 @@ State independence won out, eventually.
 
 *ALWAYS* rebind.
 #+begin_notes
-What assignment does is not dependent on the state of the optional. It always rebinds the "reference", which is not possible with a C++ reference in a struct.
+What assignment does is not dependent on the state of the optional.
+
+It always rebinds the "reference", which is not possible with a C++ reference in a struct.
 #+end_notes
 ** Non-generic template
 ~optional<T&>~ violates genericity.
@@ -215,7 +229,7 @@ Choose to model pointers, a reference semantic value type.
 
 The value category of the object does not affect value category of the referent.
 
-Otherwise an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
+Otherwise, an rvalue src_cpp[:exports code]{optional<T&>} could enable moves from the referent.
 #+begin_notes
 #+end_notes
 ** Shallow vs. Deep ~const~
@@ -244,6 +258,7 @@ Lack of ~explicit~ makes the type exponentially more complex.
 
 There are more interactions between member functions.
 #+begin_notes
+ However, lack of explicit makes the type exponentially more complex, as there are more interactions between member functions.
 #+end_notes
 ** src_cpp[:exports code]{value_or()}
 What should src_cpp[:exports code]{optional<T&>::value_or(U &&u);} return?
