@@ -1,2 +1,5 @@
 /optional/code/.build/
 /optional/code/.cache/
+/emacs.d/eln-cache/
+/emacs.d/elpa-30.2.50/
+/emacs.d/elpa/
