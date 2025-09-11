@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Generated on 2025-09-11 Thu 10:31 -->
+<!-- Generated on 2025-09-11 Thu 16:06 -->
 <meta charset="utf-8"/>
 <title><code>optional&lt;T&amp;&gt;</code></title>
 <meta name="author" content="Steve Downey"/>
@@ -6289,12 +6289,12 @@ img.footerlogo
 <p/>
 </section>
 <section>
-<section id="slide-orgd215efc">
-<h2 id="orgd215efc"><code>std::optional&lt;T&amp;&gt;</code></h2>
-<div class="outline-text-2" id="text-orgd215efc">
+<section id="slide-org286fef5">
+<h2 id="org286fef5"><code>std::optional&lt;T&amp;&gt;</code></h2>
+<div class="outline-text-2" id="text-org286fef5">
 </div>
-<div id="outline-container-orgf2af023" class="outline-3">
-<h3 id="orgf2af023">Optional Over References</h3>
+<div id="outline-container-org32c64a0" class="outline-3">
+<h3 id="org32c64a0">Optional Over References</h3>
 <p>
 Steve Downey
 </p>
@@ -6311,8 +6311,8 @@ Bloomberg
 </section>
 </section>
 <section>
-<section id="slide-org22d5a00">
-<h2 id="org22d5a00">Colophon</h2>
+<section id="slide-orgfa26f4f">
+<h2 id="orgfa26f4f">Colophon</h2>
 <ul>
 <li>Slideware: <a href="https://revealjs.com/">reveal.js</a></li>
 <li>Slide Preperation: <a href="https://gitlab.com/oer/org-re-reveal">org-re-reveal</a></li>
@@ -6340,8 +6340,8 @@ Try to present working  code, even in slideware.
 </section>
 </section>
 <section>
-<section id="slide-org029b308">
-<h2 id="org029b308">Standardising Optionals over References</h2>
+<section id="slide-org65753ab">
+<h2 id="org65753ab">Standardising Optionals over References</h2>
 <p>
 Optionals were first proposed for C++ in 2005.
 </p>
@@ -6371,8 +6371,8 @@ In 2024, the proposal to make optional a range, <a href="#citeproc_bib_item_5">�
 </section>
 </section>
 <section>
-<section id="slide-org92c45e9">
-<h3 id="org92c45e9">Why so long?</h3>
+<section id="slide-org8ca7b58">
+<h3 id="org8ca7b58">Why so long?</h3>
 <ul>
 <li>What were the concerns that made the process take so long?</li>
 <li>How were concerns addressed?</li>
@@ -6394,8 +6394,8 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-org56c3435">
-<h2 id="org56c3435">Quick overview of optional&lt;T&gt;</h2>
+<section id="slide-org31a5435">
+<h2 id="org31a5435">Quick overview of optional&lt;T&gt;</h2>
 <ul>
 <li>An owning type,</li>
 <li>with value semantics,</li>
@@ -6405,8 +6405,8 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-org462e4fc">
-<h3 id="org462e4fc">Algebraically</h3>
+<section id="slide-orgad6916c">
+<h3 id="orgad6916c">Algebraically</h3>
 <p>
 <code>T + 1</code>
 </p>
@@ -6417,8 +6417,8 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-org3da2e47">
-<h3 id="org3da2e47">Core Use Case</h3>
+<section id="slide-org4da5f01">
+<h3 id="org4da5f01">Core Use Case</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">int</span> <span class="org-variable-name">size</span>;
@@ -6433,8 +6433,8 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-orgb7f0ed3">
-<h4 id="orgb7f0ed3">C++26 Range Version</h4>
+<section id="slide-org4947b64">
+<h4 id="org4947b64">C++26 Range Version</h4>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">int</span> <span class="org-variable-name">size</span> = 0;
@@ -6447,8 +6447,8 @@ The core of the difficulty has been that references are not values  and  types c
 </section>
 </section>
 <section>
-<section id="slide-org34b04c9">
-<h3 id="org34b04c9">Default Optional Parameter</h3>
+<section id="slide-org99dfc02">
+<h3 id="org99dfc02">Default Optional Parameter</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-keyword">constexpr</span> <span class="org-type">int</span> <span class="org-function-name">optParam</span>(<span class="org-type">int</span> <span class="org-variable-name">a</span>, <span class="org-type">optional</span>&lt;<span class="org-type">int</span>&gt; <span class="org-variable-name">b</span> = {}) {
@@ -6470,8 +6470,8 @@ static_assert(t1 != t2);
 </section>
 </section>
 <section>
-<section id="slide-org6ba3b07">
-<h2 id="org6ba3b07">Quick overview of optional&lt;T&amp;&gt;</h2>
+<section id="slide-orgb4e70c7">
+<h2 id="orgb4e70c7">Quick overview of optional&lt;T&amp;&gt;</h2>
 <ul>
 <li>A non-owning type,</li>
 <li>with reference and value semantics,</li>
@@ -6481,16 +6481,16 @@ static_assert(t1 != t2);
 </section>
 </section>
 <section>
-<section id="slide-org3494bfb">
-<h3 id="org3494bfb">Core Use Case</h3>
+<section id="slide-org83d7a7e">
+<h3 id="org83d7a7e">Core Use Case</h3>
 <p>
 Looking up something for modification.
 </p>
 </section>
 </section>
 <section>
-<section id="slide-org2fd8a0e">
-<h4 id="org2fd8a0e">Today</h4>
+<section id="slide-org9ad2911">
+<h4 id="org9ad2911">Today</h4>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-keyword">auto</span> <span class="org-variable-name">i</span> = map.find(<span class="org-string">"one"</span>);
@@ -6504,8 +6504,8 @@ assert(k == map.end());
 </section>
 </section>
 <section>
-<section id="slide-orgcba5d74">
-<h4 id="orgcba5d74">With optional&lt;int&amp;&gt;</h4>
+<section id="slide-org7b06311">
+<h4 id="org7b06311">With optional&lt;int&amp;&gt;</h4>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">optional</span>&lt;<span class="org-type">int</span>&amp;&gt; <span class="org-variable-name">i</span> = findInMap(<span class="org-string">"one"</span>);
@@ -6521,8 +6521,8 @@ EXPECT_TRUE(*i == 3);
 </section>
 </section>
 <section>
-<section id="slide-orgb1ef92b">
-<h3 id="orgb1ef92b">Optional Reference Parameter</h3>
+<section id="slide-org47a243e">
+<h3 id="org47a243e">Optional Reference Parameter</h3>
 <p>
 Instead of a pointer:
 </p>
@@ -6540,8 +6540,8 @@ Instead of a pointer:
 </section>
 </section>
 <section>
-<section id="slide-org579b74d">
-<h2 id="org579b74d">Existing Problems with Optional</h2>
+<section id="slide-org6a791bb">
+<h2 id="org6a791bb">Existing Problems with Optional</h2>
 <p>
 Construction and assignment from the underlying T or a type convertable to a T produces inevitable surprises and deep complication in the implementation.
 </p>
@@ -6552,15 +6552,15 @@ Reasoning about overload sets is difficult for humans.
 </section>
 </section>
 <section>
-<section id="slide-org650b284">
-<h2 id="org650b284">The Design Problems for References</h2>
-<div class="outline-text-2" id="text-org650b284">
+<section id="slide-orgc1b4221">
+<h2 id="orgc1b4221">The Design Problems for References</h2>
+<div class="outline-text-2" id="text-orgc1b4221">
 </div>
 </section>
 </section>
 <section>
-<section id="slide-orge90226a">
-<h3 id="orge90226a">Assign or Rebind?</h3>
+<section id="slide-orgada6f61">
+<h3 id="orgada6f61">Assign or Rebind?</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span>;
@@ -6599,8 +6599,8 @@ It always rebinds the "reference", which is not possible with a C++ reference in
 </section>
 </section>
 <section>
-<section id="slide-org47e2e13">
-<h3 id="org47e2e13">Non-generic template</h3>
+<section id="slide-orgfd22bad">
+<h3 id="orgfd22bad">Non-generic template</h3>
 <p>
 <code>optional&lt;T&amp;&gt;</code> violates genericity.
 </p>
@@ -6615,15 +6615,15 @@ Reference categories are weird and non-generic.
 </section>
 </section>
 <section>
-<section id="slide-org05cda8c">
-<h2 id="org05cda8c">Design Choices</h2>
-<div class="outline-text-2" id="text-org05cda8c">
+<section id="slide-org3d50202">
+<h2 id="org3d50202">Design Choices</h2>
+<div class="outline-text-2" id="text-org3d50202">
 </div>
 </section>
 </section>
 <section>
-<section id="slide-orgbb6d48c">
-<h3 id="orgbb6d48c"><code class="src src-cpp">make_optional()</code></h3>
+<section id="slide-org279e309">
+<h3 id="org279e309"><code class="src src-cpp">make_optional()</code></h3>
 <p>
 <code>make_optional()</code> was largely supplanted by CTAD.
 </p>
@@ -6638,8 +6638,8 @@ Doing otherwise would have been worse.
 </section>
 </section>
 <section>
-<section id="slide-orgb35a504">
-<h3 id="orgb35a504">Value Category's Affect on <code class="src src-cpp"><span class="org-constant">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;::value() &amp;&amp;</code></h3>
+<section id="slide-org201df2a">
+<h3 id="org201df2a">Value Category's Affect on <code class="src src-cpp"><span class="org-constant">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;::value() &amp;&amp;</code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-constant">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;::value() &amp;&amp;;</code> return?
 </p>
@@ -6658,8 +6658,8 @@ Otherwise, an rvalue <code class="src src-cpp"><span class="org-type">optional</
 </section>
 </section>
 <section>
-<section id="slide-org34ec239">
-<h3 id="org34ec239">Shallow vs. Deep <code>const</code></h3>
+<section id="slide-orgbe0784a">
+<h3 id="orgbe0784a">Shallow vs. Deep <code>const</code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-constant">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;::value() <span class="org-keyword">const</span>;</code> return?
 </p>
@@ -6686,8 +6686,8 @@ Not a reference.
 </section>
 </section>
 <section>
-<section id="slide-orgeeb4d57">
-<h3 id="orgeeb4d57">Conditional Explicit</h3>
+<section id="slide-org199f652">
+<h3 id="org199f652">Conditional Explicit</h3>
 <p>
 Is a spelled out <code class="src src-cpp">optional&lt;<span class="org-type">T</span>&amp;&gt;(x)</code> required to construct an <code>optional&lt;T&amp;&gt;</code>?
 </p>
@@ -6716,8 +6716,8 @@ However, lack of explicit makes the type exponentially more complex, as there ar
 </section>
 </section>
 <section>
-<section id="slide-org565c3db">
-<h3 id="org565c3db"><code class="src src-cpp">value_or()</code></h3>
+<section id="slide-org9371d59">
+<h3 id="org9371d59"><code class="src src-cpp">value_or()</code></h3>
 <p>
 What should <code class="src src-cpp"><span class="org-constant">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;::value_or(<span class="org-type">U</span> &amp;&amp;<span class="org-variable-name">u</span>);</code> return?
 </p>
@@ -6747,16 +6747,16 @@ Future work: generic <code class="src src-cpp">nullable</code> functions.
 </section>
 </section>
 <section>
-<section id="slide-orgfb353fe">
-<h3 id="orgfb353fe"><code>in_place_t</code> construction</h3>
+<section id="slide-orgb2c7f89">
+<h3 id="orgb2c7f89"><code>in_place_t</code> construction</h3>
 <p>
 There is no "place" to construct in to.
 </p>
 </section>
 </section>
 <section>
-<section id="slide-org98fe80e">
-<h3 id="org98fe80e">Converting assignment</h3>
+<section id="slide-org37e071e">
+<h3 id="org37e071e">Converting assignment</h3>
 <p>
 Avoid conversions that produce temporaries.
 </p>
@@ -6771,15 +6771,15 @@ Large <i>overload sets</i> are difficult to reason about.
 </section>
 </section>
 <section>
-<section id="slide-org9626169">
-<h2 id="org9626169">Reification Principles</h2>
-<div class="outline-text-2" id="text-org9626169">
+<section id="slide-orgc86728f">
+<h2 id="orgc86728f">Reification Principles</h2>
+<div class="outline-text-2" id="text-orgc86728f">
 </div>
 </section>
 </section>
 <section>
-<section id="slide-org698520f">
-<h3 id="org698520f">Construction from temporary</h3>
+<section id="slide-org051c1ff">
+<h3 id="org051c1ff">Construction from temporary</h3>
 <p>
 Avoid taking references to temporaries.
 </p>
@@ -6790,16 +6790,16 @@ Rules out some safe cases, disallows many dangerous cases.
 </section>
 </section>
 <section>
-<section id="slide-org53ce385">
-<h3 id="org53ce385">Deleting dangling overloads</h3>
+<section id="slide-org0c28973">
+<h3 id="org0c28973">Deleting dangling overloads</h3>
 <p>
 Delete, rather than remove via <code>concept</code>,  function overloads that produce dangling references.
 </p>
 </section>
 </section>
 <section>
-<section id="slide-org4382ce8">
-<h3 id="org4382ce8">Assignment of <code class="src src-cpp"><span class="org-type">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;</code></h3>
+<section id="slide-orgb32a2b9">
+<h3 id="orgb32a2b9">Assignment of <code class="src src-cpp"><span class="org-type">optional</span>&lt;<span class="org-type">T</span>&amp;&gt;</code></h3>
 <p>
 Assignment of an optional&lt;T&amp;&gt; is equivalent to a pointer copy.
 </p>
@@ -6810,15 +6810,15 @@ All assignments are through the single function.
 </section>
 </section>
 <section>
-<section id="slide-orgfe79bc2">
-<h2 id="orgfe79bc2">Project Beman</h2>
-<div class="outline-text-2" id="text-orgfe79bc2">
+<section id="slide-orge9a2651">
+<h2 id="orge9a2651">Project Beman</h2>
+<div class="outline-text-2" id="text-orge9a2651">
 </div>
 </section>
 </section>
 <section>
-<section id="slide-orgec783e7">
-<h3 id="orgec783e7">Began last year at C++Now 2024</h3>
+<section id="slide-orge5861bd">
+<h3 id="orge5861bd">Began last year at C++Now 2024</h3>
 <p>
 Not a requirement for Standardization.
 </p>
@@ -6836,8 +6836,8 @@ LEWG is getting better at asking for implementation of exact proposal.
 </section>
 </section>
 <section>
-<section id="slide-orgf950f0e">
-<h3 id="orgf950f0e">Pre-existing smd::optional</h3>
+<section id="slide-org8d60ce9">
+<h3 id="org8d60ce9">Pre-existing smd::optional</h3>
 <p>
 Confirmed at Tokyo, live, that the range-ification would work for my test cases for <code>views::maybe</code>.
 </p>
@@ -6852,8 +6852,8 @@ This meant rework to bring it to current standards.
 </section>
 </section>
 <section>
-<section id="slide-org56b04a7">
-<h3 id="org56b04a7">The ref-stealing bug found</h3>
+<section id="slide-org1bf4882">
+<h3 id="org1bf4882">The ref-stealing bug found</h3>
 <div class="org-src-container">
 
 <pre class="src src-cpp"><span class="org-type">Cat</span> <span class="org-variable-name">fynn</span>;
@@ -6870,8 +6870,8 @@ Now fixed.
 </section>
 </section>
 <section>
-<section id="slide-org52a0b08">
-<h4 id="org52a0b08">The fix</h4>
+<section id="slide-orgf323490">
+<h4 id="orgf323490">The fix</h4>
 <p>
 Don't move the result of operator*, move the rhs and apply operator*().
 </p>
@@ -6907,8 +6907,8 @@ does not return an rvalue reference.
 </section>
 </section>
 <section>
-<section id="slide-orgd273b2a">
-<h2 id="orgd273b2a">The Modal Use-Case</h2>
+<section id="slide-org0f2df65">
+<h2 id="org0f2df65">The Modal Use-Case</h2>
 <p>
 The expected most common use is for looking up something and failure is not exceptional.
 </p>
@@ -6925,16 +6925,16 @@ We plan to add this to associative containers for C++29.
 </section>
 </section>
 <section>
-<section id="slide-org937a1b7">
-<h3 id="org937a1b7">P3091 by Pablo Halpern</h3>
+<section id="slide-orgeb85ce2">
+<h3 id="orgeb85ce2">P3091 by Pablo Halpern</h3>
 <p>
 Better Lookups for <code>map</code>, <code>unordered_map</code>, and <code>flat_map</code>
 </p>
 </section>
 </section>
 <section>
-<section id="slide-orgb3060e2">
-<h2 id="orgb3060e2">Questions?</h2>
+<section id="slide-orgd4a87d8">
+<h2 id="orgd4a87d8">Questions?</h2>
 <p>
 Remember a question starts with:
 </p>
@@ -6978,26 +6978,26 @@ Is a propositional statement, but hold them for a moment.
 </section>
 </section>
 <section>
-<section id="slide-org1a86709">
-<h2 id="org1a86709">Questions?</h2>
+<section id="slide-orgfe3a2b3">
+<h2 id="orgfe3a2b3">Questions?</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-org91dd620">
-<h2 id="org91dd620">Comments?</h2>
+<section id="slide-orga6d54b2">
+<h2 id="orga6d54b2">Comments?</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgc892228">
-<h2 id="orgc892228">Thank You!</h2>
+<section id="slide-org3473620">
+<h2 id="org3473620">Thank You!</h2>
 
 </section>
 </section>
 <section>
-<section id="slide-orgd54f927" data-visibility="hidden">
-<h2 id="orgd54f927">Bibliography</h2>
+<section id="slide-org7f4bbcc" data-visibility="hidden">
+<h2 id="org7f4bbcc">Bibliography</h2>
 <style>.csl-entry{text-indent: -1.5em; margin-left: 1.5em;}</style><div class="csl-bib-body">
   <div class="csl-entry"><a id="citeproc_bib_item_1"></a>Cacciola, Fernando. 2005. “N1878: A Proposal to Add an Utility Class to Represent Optional Objects (Revision 1).” https://wg21.link/n1878; WG21.</div>
   <div class="csl-entry"><a id="citeproc_bib_item_2"></a>Downey, Steve. 2023. “P2988R0: Std:Optional.” https://wg21.link/p2988r0; WG21.</div>
