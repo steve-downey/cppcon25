@@ -51,7 +51,7 @@
 #+REVEAL_ROOT: ./reveal.js
 #+REVEAL_VERSION: 4
 
-#+REVEAL_HLEVEL: 4
+#+REVEAL_HLEVEL: 5
 #+REVEAL_EXPORT_NOTES_TO_PDF: separate-page
 #+REVEAL_DEFAULT_FRAG_STYLE: (appear)
 #+REVEAL_EXTRA_OPTIONS: pdfSeparateFragments: true
@@ -83,7 +83,7 @@
 
 Intended to conform to [[https://www.w3.org/WAI/WCAG2AAA-Conformance][Web Content Accessibility Guidelines Level AAA]]
 
-#+REVEAL_HTML: <a href="https://www.w3.org/WAI/WCAG2AAA-Conformance" title="Explanation of WCAG 2 Level AAA conformance">  <img height="32" width="88"       src="https://www.w3.org/WAI/WCAG22/wcag2.2AAA-blue" alt="Level AAA conformance, W3C WAI Web Content Accessibility Guidelines 2.2"></a>
+#+REVEAL_HTML: <a Href="https://www.w3.org/WAI/WCAG2AAA-Conformance" title="Explanation of WCAG 2 Level AAA conformance">  <img height="32" width="88"       src="https://www.w3.org/WAI/WCAG22/wcag2.2AAA-blue" alt="Level AAA conformance, W3C WAI Web Content Accessibility Guidelines 2.2"></a>
 
 #+begin_notes
 Please try to be considerate when making presentations. Accessibility helps everyone.
@@ -373,7 +373,6 @@ Better Lookups for ~map~, ~unordered_map~, and ~flat_map~
 * Questions?
 Remember a question starts with:
 
-#+ATTR_REVEAL: :frag (current-visible)
 - who
 - what
 - when
@@ -381,18 +380,12 @@ Remember a question starts with:
 - how
 - why
 
-#+REVEAL: split
-or
-- A propositional statement :: a statement that has a truth value, either true or false, but not both.
-
-#+REVEAL: split
 and goes up at the end.
 
-#+REVEAL: split
 #+begin_quote
 "More of a comment than a question ..."
 #+end_quote
-Is a propositional statement, but hold them for a moment.
+hold them for a moment.
 * Questions?
 
 * Comments?
